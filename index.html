@@ -1,0 +1,1812 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>TK Islam Azkara Zahra</title>
+<meta name="theme-color" content="#0F3D3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script src="https://www.gstatic.com/firebasejs/10.13.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.13.2/firebase-database-compat.js"></script>
+<style>
+  :root{
+    --hijau:#0F3D3E;
+    --hijau-tua:#0A2C2D;
+    --emas:#B8860B;
+    --emas-terang:#D4A62A;
+    --krem:#FAF6ED;
+    --sage:#7C9885;
+    --tinta:#1F2A24;
+    --putih:#FFFEF9;
+    --merah:#B33A3A;
+    --radius:16px;
+    --shadow:0 4px 20px rgba(15,61,62,0.10);
+  }
+  *{box-sizing:border-box; margin:0; padding:0;}
+  body{
+    font-family:'Plus Jakarta Sans', sans-serif;
+    background:var(--krem);
+    color:var(--tinta);
+    -webkit-font-smoothing:antialiased;
+    padding-bottom:76px;
+  }
+  h1,h2,h3,.display{font-family:'Amiri', serif;}
+  .mono{font-family:'JetBrains Mono', monospace;}
+
+  .star8{display:inline-block; width:1em; height:1em; position:relative;}
+  .star8::before, .star8::after{
+    content:''; position:absolute; inset:0; background: currentColor;
+    clip-path: polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%);
+  }
+  .star8::after{ transform: rotate(45deg); }
+  .divider-star{display:flex; align-items:center; gap:10px; color:var(--emas); margin:28px 0;}
+  .divider-star .line{flex:1; height:1px; background:linear-gradient(90deg, transparent, var(--emas), transparent);}
+  .divider-star .star8{width:14px; height:14px;}
+
+  .view{display:none; animation:fadeIn .35s ease;}
+  .view.active{display:block;}
+  @keyframes fadeIn{from{opacity:0; transform:translateY(6px);} to{opacity:1; transform:translateY(0);}}
+
+  .hero{
+    background:radial-gradient(circle at 85% -10%, rgba(184,134,11,0.25), transparent 55%),
+      linear-gradient(160deg, var(--hijau) 0%, var(--hijau-tua) 100%);
+    color:var(--putih); padding:56px 24px 44px; position:relative; overflow:hidden;
+  }
+  .hero .star8{ color:var(--emas-terang); }
+  .hero-stars{position:absolute; inset:0; opacity:.12; pointer-events:none;}
+  .hero-stars .star8{position:absolute; width:40px; height:40px;}
+  .eyebrow{font-size:12px; letter-spacing:.14em; text-transform:uppercase; color:var(--emas-terang); font-weight:600; margin-bottom:14px; display:flex; align-items:center; gap:8px;}
+  .hero h1{font-size:34px; line-height:1.25; margin-bottom:12px;}
+  .hero p{font-size:15px; color:rgba(255,254,249,0.82); max-width:34ch; line-height:1.6;}
+  .btn-row{display:flex; gap:10px; margin-top:26px; flex-wrap:wrap;}
+  .btn{border:none; border-radius:999px; padding:13px 22px; font-family:inherit; font-weight:700; font-size:14px; cursor:pointer; transition:transform .15s ease, box-shadow .15s ease;}
+  .btn:active{transform:scale(0.97);}
+  .btn-emas{background:var(--emas-terang); color:var(--hijau-tua);}
+  .btn-ghost{background:rgba(255,254,249,0.1); color:var(--putih); border:1px solid rgba(255,254,249,0.35);}
+
+  .section{padding:36px 24px;}
+  .section h2{font-size:22px; color:var(--hijau); margin-bottom:6px;}
+  .section .sub{color:var(--sage); font-size:14px; margin-bottom:22px;}
+
+  .grid-3{display:grid; grid-template-columns:repeat(3,1fr); gap:12px;}
+  .grid-2{display:grid; grid-template-columns:repeat(2,1fr); gap:12px;}
+  .program-card{background:var(--putih); border-radius:var(--radius); padding:18px 14px; box-shadow:var(--shadow); text-align:center;}
+  .program-card .ic{font-size:26px; margin-bottom:8px;}
+  .program-card .t{font-weight:700; font-size:13px; color:var(--hijau);}
+  .program-card .d{font-size:11.5px; color:var(--sage); margin-top:4px; line-height:1.4;}
+
+  .quote-box{background:var(--hijau); color:var(--putih); border-radius:var(--radius); padding:26px 22px; text-align:center; position:relative;}
+  .quote-box .arab{font-family:'Amiri',serif; font-size:22px; line-height:2; margin-bottom:10px;}
+  .quote-box .terj{font-size:12.5px; color:var(--emas-terang); letter-spacing:.03em;}
+
+  .contact-card{background:var(--putih); border-radius:var(--radius); padding:20px; box-shadow:var(--shadow); display:flex; flex-direction:column; gap:10px;}
+  .contact-row{display:flex; gap:12px; font-size:14px; align-items:flex-start;}
+  .contact-row .ic{color:var(--emas); flex-shrink:0;}
+
+  .login-wrap{min-height:100vh; display:flex; align-items:center; justify-content:center; background:linear-gradient(160deg, var(--hijau) 0%, var(--hijau-tua) 100%); padding:24px;}
+  .login-card{background:var(--krem); border-radius:20px; padding:32px 26px; width:100%; max-width:380px; box-shadow:0 20px 60px rgba(0,0,0,0.3);}
+  .login-card .logo-star{width:52px; height:52px; margin:0 auto 16px; color:var(--emas); display:flex; align-items:center; justify-content:center;}
+  .login-card .logo-star .star8{width:52px; height:52px;}
+  .login-card h2{text-align:center; color:var(--hijau); font-size:20px; margin-bottom:4px;}
+  .login-card .sub{text-align:center; color:var(--sage); font-size:13px; margin-bottom:24px;}
+  .role-toggle{display:flex; background:#EDE7D8; border-radius:999px; padding:4px; margin-bottom:20px;}
+  .role-toggle button{flex:1; border:none; background:transparent; padding:10px; border-radius:999px; font-family:inherit; font-weight:700; font-size:13px; color:var(--sage); cursor:pointer;}
+  .role-toggle button.active{background:var(--hijau); color:var(--putih);}
+  .field{margin-bottom:14px;}
+  .field label{font-size:12px; font-weight:600; color:var(--tinta); display:block; margin-bottom:6px;}
+  .field input, .field select, .field textarea{width:100%; padding:12px 14px; border-radius:10px; border:1px solid #DDD5BF; font-family:inherit; font-size:14px; background:var(--putih);}
+  .field textarea{resize:vertical; min-height:70px;}
+  .btn-full{width:100%; padding:14px; border-radius:10px; margin-top:6px;}
+  .err-msg{color:var(--merah); font-size:12.5px; margin-top:10px; text-align:center; display:none;}
+  .hint{font-size:11.5px; color:var(--sage); text-align:center; margin-top:16px; line-height:1.5;}
+
+  .topbar{background:var(--hijau); color:var(--putih); padding:18px 20px 16px; display:flex; align-items:center; gap:10px; position:sticky; top:0; z-index:20;}
+  .topbar .who{font-size:12px; color:var(--emas-terang); font-weight:600;}
+  .topbar h2{font-size:18px; margin-top:2px;}
+  .topbar .tb-title{flex:1;}
+  .icon-btn{background:rgba(255,254,249,0.12); border:none; color:var(--putih); width:38px; height:38px; border-radius:10px; font-size:16px; cursor:pointer; flex-shrink:0;}
+  .back-btn{background:rgba(255,254,249,0.12); border:none; color:var(--putih); width:38px; height:38px; border-radius:10px; font-size:16px; cursor:pointer; flex-shrink:0;}
+
+  .app-body{padding:20px;}
+  .card{background:var(--putih); border-radius:var(--radius); padding:16px; box-shadow:var(--shadow); margin-bottom:14px;}
+  .card-head{display:flex; justify-content:space-between; align-items:center; margin-bottom:12px; gap:8px;}
+  .card-head h3{font-size:15px; color:var(--hijau); font-family:'Plus Jakarta Sans'; font-weight:700;}
+  .small-btn{background:var(--emas); color:var(--hijau-tua); padding:6px 14px; font-size:12px; border:none; border-radius:999px; font-family:inherit; font-weight:700; cursor:pointer; white-space:nowrap;}
+
+  .stat-row{display:flex; gap:10px; flex-wrap:wrap;}
+  .stat{flex:1; min-width:90px; background:var(--putih); border-radius:14px; padding:14px; box-shadow:var(--shadow); text-align:center;}
+  .stat .n{font-size:20px; font-weight:800; color:var(--hijau); font-family:'JetBrains Mono';}
+  .stat .l{font-size:11px; color:var(--sage); margin-top:2px;}
+  .stat.masuk .n{color:#2F7A3D;}
+  .stat.keluar .n{color:var(--merah);}
+
+  .list-item{display:flex; align-items:center; justify-content:space-between; padding:12px 0; border-bottom:1px solid #F0EBDD; gap:10px;}
+  .list-item:last-child{border-bottom:none;}
+  .list-item .name{font-weight:700; font-size:14px;}
+  .list-item .meta{font-size:12px; color:var(--sage); margin-top:2px;}
+  .li-left{display:flex; align-items:center; gap:12px; min-width:0; flex:1;}
+  .li-info{min-width:0;}
+  .avatar{width:42px; height:42px; border-radius:50%; object-fit:cover; background:#EDE7D8; flex-shrink:0; display:flex; align-items:center; justify-content:center; color:var(--sage); font-weight:700; font-size:15px;}
+  .li-actions{display:flex; gap:6px; flex-shrink:0;}
+  .icon-btn.small{width:32px; height:32px; font-size:13px;}
+  .icon-btn.edit-btn{background:#E5EEF6; color:#2C6499;}
+  .icon-btn.del-btn{background:#FBE4E4; color:var(--merah);}
+  .badge{font-size:11px; font-weight:700; padding:4px 10px; border-radius:999px; white-space:nowrap;}
+  .badge.hadir{background:#E4F0E6; color:#2F7A3D;}
+  .badge.sakit{background:#FDF0DA; color:#A96B14;}
+  .badge.izin{background:#E5EEF6; color:#2C6499;}
+  .badge.alpa{background:#FBE4E4; color:#B33A3A;}
+  .badge.lunas{background:#E4F0E6; color:#2F7A3D;}
+  .badge.belum{background:#FBE4E4; color:#B33A3A;}
+  .badge.masuk{background:#E4F0E6; color:#2F7A3D;}
+  .badge.keluar{background:#FBE4E4; color:#B33A3A;}
+  .badge.baik{background:#E4F0E6; color:#2F7A3D;}
+  .badge.rusak{background:#FBE4E4; color:#B33A3A;}
+  .badge.perlu_ganti{background:#FDF0DA; color:#A96B14;}
+  .badge.baru{background:#E5EEF6; color:#2C6499;}
+  .badge.diterima{background:#E4F0E6; color:#2F7A3D;}
+  .badge.ditolak{background:#FBE4E4; color:#B33A3A;}
+
+  .attend-btns{display:flex; gap:6px;}
+  .attend-btns button{width:34px; height:34px; border-radius:8px; border:1px solid #E3DCC9; background:var(--putih); font-size:12px; font-weight:700; cursor:pointer; color:var(--sage);}
+  .attend-btns button.sel-hadir.on{background:#2F7A3D; color:#fff; border-color:#2F7A3D;}
+  .attend-btns button.sel-sakit.on{background:#A96B14; color:#fff; border-color:#A96B14;}
+  .attend-btns button.sel-izin.on{background:#2C6499; color:#fff; border-color:#2C6499;}
+  .attend-btns button.sel-alpa.on{background:#B33A3A; color:#fff; border-color:#B33A3A;}
+
+  .fab{position:fixed; bottom:88px; right:20px; width:52px; height:52px; border-radius:50%; background:var(--emas); color:var(--hijau-tua); border:none; font-size:24px; font-weight:700; box-shadow:0 8px 20px rgba(184,134,11,0.4); cursor:pointer; z-index:25;}
+
+  .empty{text-align:center; padding:30px 10px; color:var(--sage); font-size:13px;}
+  .empty .star8{width:22px; height:22px; margin-bottom:8px; opacity:.5;}
+
+  .bottom-nav{position:fixed; bottom:0; left:0; right:0; background:var(--putih); display:flex; box-shadow:0 -2px 16px rgba(0,0,0,0.08); z-index:30; padding:8px 6px calc(8px + env(safe-area-inset-bottom));}
+  .nav-btn{flex:1; background:none; border:none; display:flex; flex-direction:column; align-items:center; gap:3px; padding:6px 2px; cursor:pointer; color:var(--sage); font-family:inherit;}
+  .nav-btn .ic{font-size:19px;}
+  .nav-btn .l{font-size:10px; font-weight:600;}
+  .nav-btn.active{color:var(--hijau);}
+
+  .menu-list{background:var(--putih); border-radius:var(--radius); box-shadow:var(--shadow); overflow:hidden;}
+  .menu-row{display:flex; align-items:center; gap:14px; padding:16px; border-bottom:1px solid #F0EBDD; cursor:pointer;}
+  .menu-row:last-child{border-bottom:none;}
+  .menu-row .ic{font-size:20px; width:26px; text-align:center;}
+  .menu-row .t{flex:1; font-weight:700; font-size:14px;}
+  .menu-row .arrow{color:var(--sage);}
+
+  .gallery-grid{display:grid; grid-template-columns:repeat(2,1fr); gap:10px;}
+  .gallery-item{border-radius:12px; overflow:hidden; box-shadow:var(--shadow); background:var(--putih);}
+  .gallery-item img{width:100%; height:110px; object-fit:cover; display:block; background:#EDE7D8;}
+  .gallery-item .cap{padding:8px 10px; font-size:11.5px; color:var(--sage);}
+
+  .modal-overlay{display:none; position:fixed; inset:0; background:rgba(15,44,45,0.55); z-index:50; align-items:flex-end; justify-content:center;}
+  .modal-overlay.active{display:flex;}
+  .modal-sheet{background:var(--krem); width:100%; max-width:480px; border-radius:20px 20px 0 0; padding:24px; max-height:85vh; overflow-y:auto; animation:slideUp .25s ease;}
+  @keyframes slideUp{from{transform:translateY(30px); opacity:0;} to{transform:translateY(0); opacity:1;}}
+  .modal-sheet h3{color:var(--hijau); font-size:17px; margin-bottom:16px;}
+  .modal-close{float:right; background:none; border:none; font-size:20px; color:var(--sage); cursor:pointer;}
+  .seg{display:flex; background:#EDE7D8; border-radius:999px; padding:4px; margin-bottom:14px;}
+  .seg button{flex:1; border:none; background:transparent; padding:9px; border-radius:999px; font-family:inherit; font-weight:700; font-size:12.5px; color:var(--sage); cursor:pointer;}
+  .seg button.active{background:var(--hijau); color:var(--putih);}
+
+  select, input, textarea{outline:none;}
+  select:focus, input:focus, textarea:focus{border-color:var(--hijau);}
+  button:focus-visible, .nav-btn:focus-visible, a:focus-visible{outline:2px solid var(--emas); outline-offset:2px;}
+</style>
+</head>
+<body>
+
+<!-- ============ LOGIN VIEW ============ -->
+<div id="view-login" class="view active">
+  <div class="login-wrap">
+    <div class="login-card">
+      <div class="logo-star"><span class="star8"></span></div>
+      <h2>TK Islam Azkara Zahra</h2>
+      <div class="sub">Masuk untuk melanjutkan</div>
+      <div class="role-toggle">
+        <button id="roleAdminBtn" class="active" onclick="setRole('admin')">Admin</button>
+        <button id="roleGuruBtn" onclick="setRole('guru')">Guru</button>
+        <button id="roleOrtuBtn" onclick="setRole('ortu')">Orang Tua</button>
+      </div>
+      <div id="loginAdminFields">
+        <div class="field"><label>Kode akses admin</label><input type="password" id="adminPass" placeholder="Masukkan kode akses"></div>
+      </div>
+      <div id="loginGuruFields" style="display:none;">
+        <div class="field"><label>Pilih nama Anda</label><select id="guruSelect"></select></div>
+        <div class="field"><label>Kode akses guru</label><input type="password" id="guruPass" placeholder="Masukkan kode akses"></div>
+      </div>
+      <div id="loginOrtuFields" style="display:none;">
+        <div class="field"><label>Pilih nama anak</label><select id="ortuChild"></select></div>
+      </div>
+      <button class="btn btn-emas btn-full" onclick="doLogin()">Masuk</button>
+      <div class="err-msg" id="loginErr">Kode akses salah, coba lagi ya.</div>
+      <div id="syncStatus" style="text-align:center; font-size:11.5px; margin-top:14px; color:var(--sage);">⏳ Menyambungkan...</div>
+      <div class="hint">Kode akses admin: <b>azkara2026</b> · Kode akses guru: <b>guru2026</b><br><br>
+      <a href="#" onclick="goPublic(); return false;" style="color:var(--hijau); font-weight:700;">Lihat halaman profil sekolah →</a></div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ PUBLIC LANDING VIEW ============ -->
+<div id="view-public" class="view">
+  <div class="hero">
+    <div class="hero-stars" id="heroStars"></div>
+    <div class="eyebrow"><span class="star8"></span> TK Islam Azkara Zahra</div>
+    <h1 class="display">Menumbuhkan Akhlak,<br>Merawat Fitrah Anak</h1>
+    <p>Pendidikan usia dini berbasis nilai-nilai Islam, tumbuh kembang anak, dan kasih sayang — untuk generasi Qur'ani sejak dini.</p>
+    <div class="btn-row">
+      <button class="btn btn-emas" onclick="scrollToPPDB()">Daftar Sekarang</button>
+      <button class="btn btn-ghost" onclick="goLogin()">Masuk Portal</button>
+    </div>
+  </div>
+
+  <div class="section">
+    <h2>Program Unggulan</h2>
+    <div class="sub">Tiga pilar pembelajaran setiap hari</div>
+    <div class="grid-3">
+      <div class="program-card"><div class="ic">📖</div><div class="t">Tahfidz & Doa Harian</div><div class="d">Hafalan surat pendek & adab sehari-hari</div></div>
+      <div class="program-card"><div class="ic">🎨</div><div class="t">Kreativitas & Motorik</div><div class="d">Seni, motorik halus, eksplorasi</div></div>
+      <div class="program-card"><div class="ic">🤝</div><div class="t">Akhlak & Sosial</div><div class="d">Adab, kemandirian, kerja sama</div></div>
+    </div>
+
+    <div class="divider-star"><div class="line"></div><span class="star8"></span><div class="line"></div></div>
+    <div class="quote-box">
+      <div class="arab">وَقُل رَّبِّ زِدْنِي عِلْمًا</div>
+      <div class="terj">"Ya Tuhanku, tambahkanlah ilmu kepadaku." (QS. Thaha: 114)</div>
+    </div>
+    <div class="divider-star"><div class="line"></div><span class="star8"></span><div class="line"></div></div>
+
+    <h2>Kegiatan Akan Datang</h2>
+    <div class="card"><div id="publicKalender"></div></div>
+
+    <h2 style="margin-top:8px;">Galeri Kegiatan</h2>
+    <div class="sub">Momen keseharian di sekolah</div>
+    <div class="gallery-grid" id="publicGaleri"></div>
+
+    <div class="divider-star"><div class="line"></div><span class="star8"></span><div class="line"></div></div>
+
+    <h2 id="ppdb-section">Pendaftaran Siswa Baru</h2>
+    <div class="sub">Isi form di bawah, tim kami akan menghubungi via WhatsApp</div>
+    <div class="card">
+      <div class="field"><label>Nama lengkap anak</label><input id="pfNamaAnak" placeholder="Nama anak"></div>
+      <div class="field"><label>Tanggal lahir anak</label><input type="date" id="pfTglLahir"></div>
+      <div class="field"><label>Nama orang tua/wali</label><input id="pfNamaOrtu" placeholder="Nama orang tua"></div>
+      <div class="field"><label>No. WhatsApp</label><input id="pfWA" placeholder="08xxxxxxxxxx"></div>
+      <div class="field"><label>Alamat</label><textarea id="pfAlamat" placeholder="Alamat tempat tinggal"></textarea></div>
+      <button class="btn btn-emas btn-full" onclick="daftarPPDB()">Kirim Pendaftaran</button>
+      <div class="err-msg" id="ppdbSuccess" style="color:#2F7A3D;">Pendaftaran terkirim! Kami akan segera menghubungi Kakak.</div>
+    </div>
+
+    <div class="divider-star"><div class="line"></div><span class="star8"></span><div class="line"></div></div>
+    <h2>Hubungi Kami</h2>
+    <div class="contact-card">
+      <div class="contact-row"><span class="ic">📍</span><span>Jl. Contoh Alamat No. 1, Palembang</span></div>
+      <div class="contact-row"><span class="ic">📱</span><span>0812-xxxx-xxxx (WhatsApp Admin)</span></div>
+      <div class="contact-row"><span class="ic">🕐</span><span>Senin–Jumat, 07.30–11.00 WIB</span></div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ ADMIN APP VIEW ============ -->
+<div id="view-admin" class="view">
+  <div class="topbar">
+    <button class="back-btn" id="adminBackBtn" style="display:none;" onclick="adminGoBack()">←</button>
+    <div class="tb-title">
+      <div class="who" id="adminWho">Admin</div>
+      <h2 id="adminPageTitle">Beranda</h2>
+    </div>
+    <button class="icon-btn" onclick="logout()">⏻</button>
+  </div>
+
+  <div class="app-body">
+    <div id="admin-home" class="admin-tab">
+      <div class="stat-row">
+        <div class="stat"><div class="n" id="statSiswa">0</div><div class="l">Siswa</div></div>
+        <div class="stat"><div class="n" id="statGuru">0</div><div class="l">Guru</div></div>
+        <div class="stat"><div class="n" id="statHadirHariIni">0</div><div class="l">Hadir Hari Ini</div></div>
+        <div class="stat"><div class="n" id="statPPDBBaru">0</div><div class="l">Pendaftar Baru</div></div>
+      </div>
+      <div class="card" style="margin-top:14px;">
+        <div class="card-head"><h3>Pengumuman Terbaru</h3><button class="small-btn" onclick="openModal('modalPengumuman')">+ Buat</button></div>
+        <div id="pengumumanListAdmin"></div>
+      </div>
+    </div>
+
+    <div id="admin-siswa" class="admin-tab" style="display:none;">
+      <div id="siswaListPanel">
+        <div class="card"><div class="card-head"><h3>Data Siswa</h3></div><div id="siswaList"></div></div>
+      </div>
+      <div id="siswaDetailPanel" style="display:none;">
+        <div class="card" id="siswaDetailProfile"></div>
+        <div class="card">
+          <div class="card-head"><h3>Tagihan & Cicilan</h3><button class="small-btn" onclick="openModalTagihan()">+ Buat Tagihan</button></div>
+          <div class="hint" style="text-align:left; margin:0 0 10px;">Kategori: SPP, Seragam, Infaq/Sedekah, Pendaftaran, Kegiatan/Ekstra, Tabungan. Setiap tagihan bisa dibayar bertahap (cicilan).</div>
+          <div id="tagihanList"></div>
+        </div>
+      </div>
+    </div>
+
+    <div id="admin-absen" class="admin-tab" style="display:none;">
+      <div class="card">
+        <div class="card-head"><h3>Absensi</h3><input type="date" id="absenTanggal" class="mono" style="border:1px solid #E3DCC9; border-radius:8px; padding:6px 8px; font-size:12px;"></div>
+        <div id="absenList"></div>
+      </div>
+    </div>
+
+    <div id="admin-keuangan" class="admin-tab" style="display:none;">
+      <div class="stat-row">
+        <div class="stat masuk"><div class="n mono" id="statMasuk">0</div><div class="l">Masuk</div></div>
+        <div class="stat keluar"><div class="n mono" id="statKeluar">0</div><div class="l">Keluar</div></div>
+        <div class="stat"><div class="n mono" id="statSaldo">0</div><div class="l">Saldo</div></div>
+      </div>
+      <div class="card" style="margin-top:14px;">
+        <div class="card-head"><h3>Buku Kas — <span id="keuanganBulanLabel"></span></h3></div>
+        <div id="keuanganList"></div>
+      </div>
+    </div>
+
+    <div id="admin-lainnya" class="admin-tab" style="display:none;">
+      <div class="menu-list">
+        <div class="menu-row" id="menuKPI" onclick="openSub('sub-kpi')"><span class="ic">📊</span><span class="t">Dashboard KPI Sekolah</span><span class="arrow">›</span></div>
+        <div class="menu-row" id="menuKPIGuru" onclick="openSub('sub-kpi-guru')"><span class="ic">🏅</span><span class="t">KPI Guru</span><span class="arrow">›</span></div>
+        <div class="menu-row" onclick="openSub('sub-guru')"><span class="ic">👩‍🏫</span><span class="t">Data Guru</span><span class="arrow">›</span></div>
+        <div class="menu-row" onclick="openSub('sub-bayar')"><span class="ic">💳</span><span class="t">Pembayaran SPP</span><span class="arrow">›</span></div>
+        <div class="menu-row" onclick="openSub('sub-rapor')"><span class="ic">📝</span><span class="t">Rapor Perkembangan Anak</span><span class="arrow">›</span></div>
+        <div class="menu-row" onclick="openSub('sub-kalender')"><span class="ic">📅</span><span class="t">Kalender Akademik</span><span class="arrow">›</span></div>
+        <div class="menu-row" onclick="openSub('sub-galeri')"><span class="ic">🖼️</span><span class="t">Galeri Foto</span><span class="arrow">›</span></div>
+        <div class="menu-row" onclick="openSub('sub-inventaris')"><span class="ic">📦</span><span class="t">Inventaris Sekolah</span><span class="arrow">›</span></div>
+        <div class="menu-row" onclick="openSub('sub-ppdb')"><span class="ic">🧾</span><span class="t">Pendaftaran Baru (PPDB)</span><span class="arrow">›</span></div>
+      </div>
+    </div>
+
+    <!-- SUB VIEWS (opened from Lainnya) -->
+    <div id="sub-kpi" class="admin-sub" style="display:none;">
+      <div class="stat-row" style="flex-wrap:wrap;">
+        <div class="stat" style="min-width:45%;"><div class="n mono" id="kpiKehadiran">0%</div><div class="l">Kehadiran Bulan Ini</div></div>
+        <div class="stat" style="min-width:45%;"><div class="n mono" id="kpiSpp">0%</div><div class="l">SPP Lunas Bulan Ini</div></div>
+        <div class="stat" style="min-width:45%;"><div class="n mono" id="kpiRasio">-</div><div class="l">Rasio Guru : Siswa</div></div>
+        <div class="stat" style="min-width:45%;"><div class="n mono" id="kpiPpdb">0</div><div class="l">Pendaftar Baru Bulan Ini</div></div>
+      </div>
+      <div class="card" style="margin-top:14px;">
+        <div class="card-head"><h3>Keuangan Bulan Ini</h3></div>
+        <div class="stat-row">
+          <div class="stat masuk"><div class="n mono" id="kpiMasuk">Rp0</div><div class="l">Masuk</div></div>
+          <div class="stat keluar"><div class="n mono" id="kpiKeluar">Rp0</div><div class="l">Keluar</div></div>
+          <div class="stat"><div class="n mono" id="kpiSaldo">Rp0</div><div class="l">Saldo</div></div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-head"><h3>Piutang Belum Lunas (Semua Siswa)</h3></div>
+        <div style="font-size:24px; font-weight:800; color:var(--merah); font-family:'JetBrains Mono';" id="kpiPiutang">Rp0</div>
+        <div style="font-size:12px; color:var(--sage); margin-top:4px;">Total sisa tagihan (SPP, Seragam, Infaq, dll) yang belum dibayar lunas dari seluruh siswa</div>
+      </div>
+      <div class="card">
+        <div class="card-head"><h3>Kondisi Inventaris</h3></div>
+        <div id="kpiInventaris"></div>
+      </div>
+    </div>
+    <div id="sub-kpi-guru" class="admin-sub" style="display:none;">
+      <div class="hint" style="text-align:left; margin:0 0 12px;">Kehadiran kelas & kelengkapan rapor dihitung otomatis dari data. Penilaian kedisiplinan, kreativitas, komunikasi & partisipasi diisi manual oleh Admin.</div>
+      <div id="kpiGuruList"></div>
+    </div>
+    <div id="sub-guru" class="admin-sub" style="display:none;">
+      <div class="card"><div class="card-head"><h3>Data Guru</h3></div><div id="guruList"></div></div>
+    </div>
+    <div id="sub-bayar" class="admin-sub" style="display:none;">
+      <div class="card"><div class="card-head"><h3>SPP — <span id="bayarBulanLabel"></span></h3></div>
+        <div class="hint" style="text-align:left; margin:0 0 10px;">Tekan status <b>Lunas/Belum</b> di sebelah kanan nama siswa untuk mengubahnya.</div>
+        <div id="bayarList"></div></div>
+    </div>
+    <div id="sub-rapor" class="admin-sub" style="display:none;">
+      <div class="card"><div class="card-head"><h3>Rapor Perkembangan</h3></div><div id="raporSiswaPicker"></div></div>
+      <div class="card"><div class="card-head"><h3 id="raporSiswaNama">Pilih siswa di atas</h3></div><div id="raporList"></div></div>
+    </div>
+    <div id="sub-kalender" class="admin-sub" style="display:none;">
+      <div class="card"><div class="card-head"><h3>Kalender Akademik</h3></div><div id="kalenderListAdmin"></div></div>
+    </div>
+    <div id="sub-galeri" class="admin-sub" style="display:none;">
+      <div class="card"><div class="card-head"><h3>Galeri Foto</h3></div><div class="gallery-grid" id="galeriListAdmin"></div></div>
+    </div>
+    <div id="sub-inventaris" class="admin-sub" style="display:none;">
+      <div class="card"><div class="card-head"><h3>Inventaris Sekolah</h3></div><div id="inventarisList"></div></div>
+    </div>
+    <div id="sub-ppdb" class="admin-sub" style="display:none;">
+      <div class="card"><div class="card-head"><h3>Pendaftar Baru</h3></div><div id="ppdbList"></div></div>
+    </div>
+  </div>
+
+  <button class="fab" id="adminFab" onclick="fabAction()">+</button>
+
+  <div class="bottom-nav">
+    <button class="nav-btn active" onclick="setAdminTab('home', this)"><span class="ic">🏠</span><span class="l">Beranda</span></button>
+    <button class="nav-btn" onclick="setAdminTab('siswa', this)"><span class="ic">🧒</span><span class="l">Siswa</span></button>
+    <button class="nav-btn" onclick="setAdminTab('absen', this)"><span class="ic">✅</span><span class="l">Absensi</span></button>
+    <button class="nav-btn" id="navKeuanganBtn" onclick="setAdminTab('keuangan', this)"><span class="ic">💰</span><span class="l">Keuangan</span></button>
+    <button class="nav-btn" onclick="setAdminTab('lainnya', this)"><span class="ic">⋯</span><span class="l">Lainnya</span></button>
+  </div>
+</div>
+
+<!-- ============ ORANG TUA APP VIEW ============ -->
+<div id="view-ortu" class="view">
+  <div class="topbar">
+    <button class="back-btn" id="ortuBackBtn" style="display:none;" onclick="ortuGoBack()">←</button>
+    <div class="tb-title">
+      <div class="who">Orang Tua</div>
+      <h2 id="ortuPageTitle">Beranda</h2>
+    </div>
+    <button class="icon-btn" onclick="logout()">⏻</button>
+  </div>
+
+  <div class="app-body">
+    <div id="ortu-home" class="ortu-tab">
+      <div class="card">
+        <div class="card-head">
+          <div class="li-left" style="gap:12px;">
+            <span id="ortuAnakAvatar"></span>
+            <h3 id="ortuAnakNama">-</h3>
+          </div>
+          <span class="badge hadir" id="ortuAnakKelas"></span>
+        </div>
+        <div style="font-size:13px; color:var(--sage);">Kehadiran bulan ini: <b id="ortuHadirBulan" class="mono" style="color:var(--hijau);">0</b> hari</div>
+      </div>
+      <div class="card"><div class="card-head"><h3>Pengumuman</h3></div><div id="pengumumanListOrtu"></div></div>
+    </div>
+
+    <div id="ortu-absen" class="ortu-tab" style="display:none;">
+      <div class="card"><div class="card-head"><h3>Riwayat Kehadiran</h3></div><div id="ortuAbsenList"></div></div>
+    </div>
+
+    <div id="ortu-bayar" class="ortu-tab" style="display:none;">
+      <div class="card"><div class="card-head"><h3>Status Pembayaran SPP</h3></div><div id="ortuBayarList"></div></div>
+    </div>
+
+    <div id="ortu-lainnya" class="ortu-tab" style="display:none;">
+      <div class="menu-list">
+        <div class="menu-row" onclick="openSubOrtu('subo-tagihan')"><span class="ic">🧾</span><span class="t">Tagihan & Pembayaran</span><span class="arrow">›</span></div>
+        <div class="menu-row" onclick="openSubOrtu('subo-rapor')"><span class="ic">📝</span><span class="t">Rapor Perkembangan Anak</span><span class="arrow">›</span></div>
+        <div class="menu-row" onclick="openSubOrtu('subo-kalender')"><span class="ic">📅</span><span class="t">Kalender Akademik</span><span class="arrow">›</span></div>
+        <div class="menu-row" onclick="openSubOrtu('subo-galeri')"><span class="ic">🖼️</span><span class="t">Galeri Foto</span><span class="arrow">›</span></div>
+      </div>
+    </div>
+
+    <div id="subo-tagihan" class="ortu-sub" style="display:none;">
+      <div class="card"><div class="card-head"><h3>Tagihan & Pembayaran</h3></div><div id="ortuTagihanList"></div></div>
+    </div>
+    <div id="subo-rapor" class="ortu-sub" style="display:none;">
+      <div class="card"><div class="card-head"><h3>Rapor Perkembangan</h3></div><div id="ortuRaporList"></div></div>
+    </div>
+    <div id="subo-kalender" class="ortu-sub" style="display:none;">
+      <div class="card"><div class="card-head"><h3>Kalender Akademik</h3></div><div id="ortuKalenderList"></div></div>
+    </div>
+    <div id="subo-galeri" class="ortu-sub" style="display:none;">
+      <div class="card"><div class="card-head"><h3>Galeri Foto</h3></div><div class="gallery-grid" id="ortuGaleriList"></div></div>
+    </div>
+  </div>
+
+  <div class="bottom-nav">
+    <button class="nav-btn active" onclick="setOrtuTab('home', this)"><span class="ic">🏠</span><span class="l">Beranda</span></button>
+    <button class="nav-btn" onclick="setOrtuTab('absen', this)"><span class="ic">✅</span><span class="l">Kehadiran</span></button>
+    <button class="nav-btn" onclick="setOrtuTab('bayar', this)"><span class="ic">💳</span><span class="l">SPP</span></button>
+    <button class="nav-btn" onclick="setOrtuTab('lainnya', this)"><span class="ic">⋯</span><span class="l">Lainnya</span></button>
+  </div>
+</div>
+
+<!-- ============ MODALS ============ -->
+<div class="modal-overlay" id="modalSiswa">
+  <div class="modal-sheet">
+    <button class="modal-close" onclick="closeModal('modalSiswa')">✕</button>
+    <h3 id="modalSiswaTitle">Tambah Siswa</h3>
+    <div class="field">
+      <label>Foto (opsional)</label>
+      <div style="display:flex; gap:12px; align-items:center; margin-bottom:8px;">
+        <div id="fSiswaFotoPreview" class="avatar" style="width:56px; height:56px; font-size:20px;">?</div>
+        <label class="small-btn" style="cursor:pointer; display:inline-flex; align-items:center;">
+          Upload dari Perangkat
+          <input type="file" accept="image/*" id="fSiswaFotoFile" style="display:none;" onchange="handleFotoUpload(event,'siswa')">
+        </label>
+      </div>
+      <input id="fSiswaFoto" placeholder="atau tempel link URL foto" oninput="updateFotoPreview('siswa')">
+    </div>
+    <div class="field"><label>Nama lengkap</label><input id="fSiswaNama" placeholder="Nama siswa"></div>
+    <div class="field"><label>Kelas</label><select id="fSiswaKelas"><option>Kelas A</option><option>Kelas B</option></select></div>
+    <div class="field"><label>Nama orang tua</label><input id="fSiswaOrtu" placeholder="Nama orang tua/wali"></div>
+    <div class="field"><label>No. WhatsApp orang tua</label><input id="fSiswaWA" placeholder="08xxxxxxxxxx"></div>
+    <button class="btn btn-emas btn-full" id="modalSiswaBtn" onclick="tambahSiswa()">Simpan</button>
+  </div>
+</div>
+
+<div class="modal-overlay" id="modalGuru">
+  <div class="modal-sheet">
+    <button class="modal-close" onclick="closeModal('modalGuru')">✕</button>
+    <h3 id="modalGuruTitle">Tambah Guru</h3>
+    <div class="field">
+      <label>Foto (opsional)</label>
+      <div style="display:flex; gap:12px; align-items:center; margin-bottom:8px;">
+        <div id="fGuruFotoPreview" class="avatar" style="width:56px; height:56px; font-size:20px;">?</div>
+        <label class="small-btn" style="cursor:pointer; display:inline-flex; align-items:center;">
+          Upload dari Perangkat
+          <input type="file" accept="image/*" id="fGuruFotoFile" style="display:none;" onchange="handleFotoUpload(event,'guru')">
+        </label>
+      </div>
+      <input id="fGuruFoto" placeholder="atau tempel link URL foto" oninput="updateFotoPreview('guru')">
+    </div>
+    <div class="field"><label>Nama lengkap</label><input id="fGuruNama" placeholder="Nama guru"></div>
+    <div class="field"><label>Mengajar kelas</label><select id="fGuruKelas"><option>Kelas A</option><option>Kelas B</option><option>Semua Kelas</option></select></div>
+    <div class="field"><label>No. WhatsApp</label><input id="fGuruWA" placeholder="08xxxxxxxxxx"></div>
+    <button class="btn btn-emas btn-full" id="modalGuruBtn" onclick="tambahGuru()">Simpan</button>
+  </div>
+</div>
+
+<div class="modal-overlay" id="modalPengumuman">
+  <div class="modal-sheet">
+    <button class="modal-close" onclick="closeModal('modalPengumuman')">✕</button>
+    <h3>Buat Pengumuman</h3>
+    <div class="field"><label>Judul</label><input id="fPengJudul" placeholder="Judul pengumuman"></div>
+    <div class="field"><label>Isi</label><input id="fPengIsi" placeholder="Isi pengumuman singkat"></div>
+    <button class="btn btn-emas btn-full" onclick="tambahPengumuman()">Kirim ke Semua Orang Tua</button>
+  </div>
+</div>
+
+<div class="modal-overlay" id="modalKeuangan">
+  <div class="modal-sheet">
+    <button class="modal-close" onclick="closeModal('modalKeuangan')">✕</button>
+    <h3>Catat Transaksi</h3>
+    <div class="seg">
+      <button id="segMasuk" class="active" onclick="setKeuanganTipe('masuk')">Pemasukan</button>
+      <button id="segKeluar" onclick="setKeuanganTipe('keluar')">Pengeluaran</button>
+    </div>
+    <div class="field"><label>Tanggal</label><input type="date" id="fKeuTgl"></div>
+    <div class="field"><label>Kategori</label><select id="fKeuKategori" onchange="onKeuKategoriChange()"></select></div>
+    <div class="field" id="fKeuSiswaWrap" style="display:none;">
+      <label>Atas nama siswa</label>
+      <select id="fKeuSiswa"><option value="">- Tidak terkait siswa -</option></select>
+    </div>
+    <div class="field" id="fKeuGuruWrap" style="display:none;">
+      <label>Atas nama guru/staf</label>
+      <select id="fKeuGuru"><option value="">- Tidak terkait guru/staf -</option></select>
+    </div>
+    <div class="field"><label>Jumlah (Rp)</label><input type="number" id="fKeuJumlah" placeholder="0"></div>
+    <div class="field"><label>Keterangan</label><input id="fKeuKet" placeholder="Keterangan singkat"></div>
+    <button class="btn btn-emas btn-full" onclick="tambahKeuangan()">Simpan</button>
+  </div>
+</div>
+
+<div class="modal-overlay" id="modalInventaris">
+  <div class="modal-sheet">
+    <button class="modal-close" onclick="closeModal('modalInventaris')">✕</button>
+    <h3>Tambah Barang</h3>
+    <div class="field">
+      <label>Foto barang (opsional)</label>
+      <div id="fInvPreviewWrap" style="margin-bottom:10px;"></div>
+      <label class="small-btn" style="cursor:pointer; display:inline-flex; align-items:center;">
+        Upload dari Perangkat
+        <input type="file" accept="image/*" id="fInvFile" style="display:none;" onchange="handleInventarisUpload(event)">
+      </label>
+      <input id="fInvFoto" placeholder="atau tempel link URL foto" style="margin-top:8px;" oninput="updateInventarisPreview()">
+    </div>
+    <div class="field"><label>Nama barang</label><input id="fInvNama" placeholder="Nama barang"></div>
+    <div class="field"><label>Jumlah</label><input type="number" id="fInvJumlah" placeholder="1"></div>
+    <div class="field"><label>Kondisi</label><select id="fInvKondisi"><option value="baik">Baik</option><option value="rusak">Rusak</option><option value="perlu_ganti">Perlu Diganti</option></select></div>
+    <div class="field"><label>Lokasi/penyimpanan</label><input id="fInvLokasi" placeholder="Contoh: Kelas A, Gudang"></div>
+    <button class="btn btn-emas btn-full" onclick="tambahInventaris()">Simpan</button>
+  </div>
+</div>
+
+<div class="modal-overlay" id="modalRapor">
+  <div class="modal-sheet">
+    <button class="modal-close" onclick="closeModal('modalRapor')">✕</button>
+    <h3>Tambah Catatan Rapor (STPPA)</h3>
+    <div class="field"><label>Semester</label><input id="fRaporSemester" placeholder="Contoh: Semester 1 - 2026"></div>
+    <div class="field"><label>1. Nilai Agama & Moral</label><textarea id="fRaporAgama" placeholder="Contoh: hafal doa sehari-hari, terbiasa mengucap salam"></textarea></div>
+    <div class="field"><label>2. Fisik-Motorik</label><textarea id="fRaporFisik" placeholder="Perkembangan motorik kasar & halus anak"></textarea></div>
+    <div class="field"><label>3. Kognitif</label><textarea id="fRaporKognitif" placeholder="Perkembangan berpikir & pemecahan masalah"></textarea></div>
+    <div class="field"><label>4. Bahasa</label><textarea id="fRaporBahasa" placeholder="Perkembangan kemampuan berbahasa & komunikasi"></textarea></div>
+    <div class="field"><label>5. Sosial-Emosional</label><textarea id="fRaporSosial" placeholder="Kemandirian, kerja sama, pengendalian emosi"></textarea></div>
+    <div class="field"><label>6. Seni</label><textarea id="fRaporSeni" placeholder="Kreativitas, apresiasi seni & imajinasi"></textarea></div>
+    <button class="btn btn-emas btn-full" onclick="tambahRapor()">Simpan Rapor</button>
+    <div class="hint">Mengacu pada 6 aspek STPPA (Standar Tingkat Pencapaian Perkembangan Anak) Kemendikbud.</div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="modalPenilaianGuru">
+  <div class="modal-sheet">
+    <button class="modal-close" onclick="closeModal('modalPenilaianGuru')">✕</button>
+    <h3 id="modalPenilaianGuruTitle">Penilaian Guru</h3>
+    <div class="field"><label>Kedisiplinan (1-5)</label><select id="fNilaiDisiplin"><option value="5">5 - Sangat Baik</option><option value="4">4 - Baik</option><option value="3">3 - Cukup</option><option value="2">2 - Kurang</option><option value="1">1 - Sangat Kurang</option></select></div>
+    <div class="field"><label>Kreativitas Mengajar (1-5)</label><select id="fNilaiKreatif"><option value="5">5 - Sangat Baik</option><option value="4">4 - Baik</option><option value="3">3 - Cukup</option><option value="2">2 - Kurang</option><option value="1">1 - Sangat Kurang</option></select></div>
+    <div class="field"><label>Komunikasi dengan Orang Tua (1-5)</label><select id="fNilaiKomunikasi"><option value="5">5 - Sangat Baik</option><option value="4">4 - Baik</option><option value="3">3 - Cukup</option><option value="2">2 - Kurang</option><option value="1">1 - Sangat Kurang</option></select></div>
+    <div class="field"><label>Partisipasi Kegiatan Sekolah (1-5)</label><select id="fNilaiPartisipasi"><option value="5">5 - Sangat Baik</option><option value="4">4 - Baik</option><option value="3">3 - Cukup</option><option value="2">2 - Kurang</option><option value="1">1 - Sangat Kurang</option></select></div>
+    <div class="field"><label>Catatan tambahan</label><textarea id="fNilaiCatatan" placeholder="Catatan kualitatif dari kepala sekolah"></textarea></div>
+    <button class="btn btn-emas btn-full" onclick="simpanPenilaianGuru()">Simpan Penilaian</button>
+  </div>
+</div>
+
+<div class="modal-overlay" id="modalKalender">
+  <div class="modal-sheet">
+    <button class="modal-close" onclick="closeModal('modalKalender')">✕</button>
+    <h3>Tambah Kegiatan/Acara</h3>
+    <div class="field"><label>Tanggal</label><input type="date" id="fKalTgl"></div>
+    <div class="field"><label>Judul kegiatan</label><input id="fKalJudul" placeholder="Contoh: Libur Semester"></div>
+    <div class="field"><label>Keterangan</label><input id="fKalKet" placeholder="Keterangan singkat"></div>
+    <button class="btn btn-emas btn-full" onclick="tambahKalender()">Simpan</button>
+  </div>
+</div>
+
+<div class="modal-overlay" id="modalGaleri">
+  <div class="modal-sheet">
+    <button class="modal-close" onclick="closeModal('modalGaleri')">✕</button>
+    <h3>Tambah Foto</h3>
+    <div class="field">
+      <label>Foto</label>
+      <div id="fGalPreviewWrap" style="margin-bottom:10px;"></div>
+      <label class="small-btn" style="cursor:pointer; display:inline-flex; align-items:center;">
+        Upload dari Perangkat
+        <input type="file" accept="image/*" id="fGalFile" style="display:none;" onchange="handleGaleriUpload(event)">
+      </label>
+    </div>
+    <div class="field"><label>Link URL foto</label><input id="fGalUrl" placeholder="https://..." oninput="updateGaleriPreview()"></div>
+    <div class="field"><label>Keterangan foto</label><input id="fGalCap" placeholder="Contoh: Kegiatan mewarnai"></div>
+    <button class="btn btn-emas btn-full" onclick="tambahGaleri()">Simpan</button>
+    <div class="hint">Bisa upload langsung dari HP, atau tempel link dari Google Drive/Imgur.</div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="modalTagihan">
+  <div class="modal-sheet">
+    <button class="modal-close" onclick="closeModal('modalTagihan')">✕</button>
+    <h3>Buat Tagihan Baru</h3>
+    <div class="field"><label>Kategori</label>
+      <select id="fTagihanKategori">
+        <option>SPP</option><option>Seragam</option><option>Infaq/Sedekah</option>
+        <option>Pendaftaran</option><option>Kegiatan/Ekstra</option><option>Tabungan</option>
+      </select>
+    </div>
+    <div class="field"><label>Judul tagihan</label><input id="fTagihanJudul" placeholder="Contoh: SPP Bulan Juli 2026"></div>
+    <div class="field"><label>Total tagihan (Rp)</label><input type="number" id="fTagihanTotal" placeholder="0"></div>
+    <button class="btn btn-emas btn-full" onclick="tambahTagihan()">Buat Tagihan</button>
+  </div>
+</div>
+
+<div class="modal-overlay" id="modalCicilan">
+  <div class="modal-sheet">
+    <button class="modal-close" onclick="closeModal('modalCicilan')">✕</button>
+    <h3 id="modalCicilanTitle">Catat Pembayaran</h3>
+    <div class="field"><label>Tanggal bayar</label><input type="date" id="fCicilanTgl"></div>
+    <div class="field"><label>Jumlah dibayar (Rp)</label><input type="number" id="fCicilanJumlah" placeholder="0"></div>
+    <button class="btn btn-emas btn-full" onclick="tambahCicilan()">Simpan Pembayaran</button>
+  </div>
+</div>
+
+<script>
+/* ==================== DATA LAYER (localStorage) ==================== */
+const DB_KEY = 'tkaz_data_v2';
+const defaultData = {
+  settings:{ passAdmin:'azkara2026', passGuru:'guru2026' },
+  siswa:[
+    {id:'s1', nama:'Ahmad Fauzan', kelas:'Kelas A', ortu:'Bpk. Fauzan', wa:'6281200000001'},
+    {id:'s2', nama:'Siti Aisyah', kelas:'Kelas B', ortu:'Ibu Rahma', wa:'6281200000002'},
+  ],
+  guru:[
+    {id:'g1', nama:'Ustadzah Fitri', kelas:'Kelas A', wa:'6281300000001'},
+    {id:'g2', nama:'Ustadzah Nurul', kelas:'Kelas B', wa:'6281300000002'},
+  ],
+  absensi:{},
+  pembayaran:{},
+  pengumuman:[{id:'p1', judul:'Selamat Datang', isi:'Selamat datang di portal TK Islam Azkara Zahra!', tgl:new Date().toISOString().slice(0,10)}],
+  keuangan:[],
+  inventaris:[],
+  rapor:{},
+  kalender:[],
+  galeri:[],
+  ppdb:[],
+  tagihan:{},
+  penilaianGuru:{}
+};
+const KATEGORI_MASUK = ['SPP','Pendaftaran','Seragam','Kegiatan/Ekstra','Infaq/Sedekah','Tabungan','Lainnya'];
+const KATEGORI_KELUAR = ['Gaji Guru/Staf','Listrik & Air','ATK & Perlengkapan','Konsumsi','Perawatan Gedung','Lainnya'];
+
+function loadDB(){
+  try{
+    const raw = localStorage.getItem(DB_KEY);
+    if(!raw){ saveDB(defaultData); return structuredClone(defaultData); }
+    const parsed = JSON.parse(raw);
+    Object.keys(defaultData).forEach(k=>{ if(!(k in parsed)) parsed[k]=defaultData[k]; });
+    Object.keys(defaultData.settings).forEach(k=>{ if(!(k in parsed.settings)) parsed.settings[k]=defaultData.settings[k]; });
+    return parsed;
+  }catch(e){ return structuredClone(defaultData); }
+}
+function saveDB(d){
+  localStorage.setItem(DB_KEY, JSON.stringify(d));
+  if(fbRef && firebaseReady && !isApplyingRemoteUpdate){
+    fbRef.set(d).catch(e=>console.error('Gagal menyimpan ke server:', e));
+  }
+}
+
+let DB = loadDB();
+let session = { role:null, childId:null, guruId:null };
+
+/* ==================== SINKRONISASI FIREBASE (Realtime Database) ==================== */
+const firebaseConfig = {
+  apiKey: "AIzaSyB5da4SHGmEIDUOFrnx3fZyHZeA6l1m838",
+  authDomain: "azkarazahra-49e4a.firebaseapp.com",
+  databaseURL: "https://azkarazahra-49e4a-default-rtdb.asia-southeast1.firebasedatabase.app",
+  projectId: "azkarazahra-49e4a",
+  storageBucket: "azkarazahra-49e4a.firebasestorage.app",
+  messagingSenderId: "570067021238",
+  appId: "1:570067021238:web:672f749564b9a60474a517",
+  measurementId: "G-ZKWFJ5FHQK"
+};
+let firebaseReady = false;
+let fbRef = null;
+let isApplyingRemoteUpdate = false;
+
+function updateSyncStatus(status){
+  const el = document.getElementById('syncStatus'); if(!el) return;
+  if(status==='online'){ el.innerHTML='☁️ Tersambung — data sinkron otomatis'; el.style.color='#2F7A3D'; }
+  else if(status==='connecting'){ el.innerHTML='⏳ Menyambungkan...'; el.style.color='var(--sage)'; }
+  else { el.innerHTML='📴 Mode offline — data tersimpan di HP ini saja'; el.style.color='var(--merah)'; }
+}
+function mergeDefaults(obj){
+  Object.keys(defaultData).forEach(k=>{ if(!(k in obj)) obj[k]=defaultData[k]; });
+  Object.keys(defaultData.settings).forEach(k=>{ if(!(k in obj.settings)) obj.settings[k]=defaultData.settings[k]; });
+  return obj;
+}
+function refreshAllVisible(){
+  try{
+    if(document.getElementById('view-admin').classList.contains('active')){
+      renderAdminHome(); renderSiswaList(); renderGuruList(); renderAbsenList(); renderBayarList();
+      if(document.getElementById('admin-keuangan').style.display==='block') renderKeuangan();
+      if(currentDetailSiswaId) renderTagihanList();
+      if(window._currentSub==='sub-inventaris') renderInventaris();
+      if(window._currentSub==='sub-kalender') renderKalenderAdmin();
+      if(window._currentSub==='sub-galeri') renderGaleriAdmin();
+      if(window._currentSub==='sub-ppdb') renderPPDBAdmin();
+      if(window._currentSub==='sub-kpi') renderKPI();
+      if(window._currentSub==='sub-kpi-guru') renderKPIGuru();
+      if(currentRaporSiswaId) renderRaporList();
+    }
+    if(document.getElementById('view-ortu').classList.contains('active')){
+      renderOrtuHome(); renderOrtuAbsen(); renderOrtuBayar(); renderOrtuRapor(); renderOrtuKalender(); renderOrtuGaleri(); renderOrtuTagihan();
+    }
+    if(document.getElementById('view-public').classList.contains('active')){
+      renderPublicKalender(); renderPublicGaleri();
+    }
+  }catch(e){ console.error('Gagal refresh tampilan:', e); }
+}
+function listenRemoteChanges(){
+  if(!fbRef) return;
+  fbRef.on('value', snapshot=>{
+    const remote = snapshot.val();
+    if(!remote) return;
+    isApplyingRemoteUpdate = true;
+    DB = mergeDefaults(remote);
+    localStorage.setItem(DB_KEY, JSON.stringify(DB));
+    firebaseReady = true;
+    updateSyncStatus('online');
+    refreshAllVisible();
+    isApplyingRemoteUpdate = false;
+  }, err=>{
+    console.error('Firebase listener error:', err);
+    updateSyncStatus('offline');
+  });
+}
+async function syncWithFirebase(){
+  updateSyncStatus('connecting');
+  try{
+    if(typeof firebase === 'undefined') throw new Error('SDK Firebase gagal dimuat');
+    firebase.initializeApp(firebaseConfig);
+    fbRef = firebase.database().ref('tkaz_data');
+    const snapshot = await Promise.race([
+      fbRef.once('value'),
+      new Promise((_,reject)=>setTimeout(()=>reject(new Error('timeout')), 7000))
+    ]);
+    const remote = snapshot.val();
+    if(remote){
+      DB = mergeDefaults(remote);
+      localStorage.setItem(DB_KEY, JSON.stringify(DB));
+      refreshAllVisible();
+    } else {
+      fbRef.set(DB).catch(e=>console.error('Gagal mengirim data awal:', e));
+    }
+    firebaseReady = true;
+    updateSyncStatus('online');
+    listenRemoteChanges();
+  }catch(e){
+    console.error('Sinkronisasi awal gagal atau timeout, lanjut pakai data lokal:', e);
+    firebaseReady = false;
+    updateSyncStatus('offline');
+    listenRemoteChanges();
+  }
+}
+let currentAbsenDate = new Date().toISOString().slice(0,10);
+let currentBayarMonth = new Date().toISOString().slice(0,7);
+let currentKeuMonth = new Date().toISOString().slice(0,7);
+let currentRaporSiswaId = null;
+let adminSubStack = [];
+let ortuSubStack = [];
+
+/* ==================== NAV / VIEW SWITCH ==================== */
+function showView(id){ document.querySelectorAll('.view').forEach(v=>v.classList.remove('active')); document.getElementById(id).classList.add('active'); }
+function goPublic(){ showView('view-public'); renderPublicKalender(); renderPublicGaleri(); }
+function goLogin(){ showView('view-login'); populateOrtuSelect(); populateGuruSelect(); }
+function scrollToPPDB(){ showView('view-public'); document.getElementById('ppdb-section').scrollIntoView({behavior:'smooth'}); }
+
+function setRole(role){
+  session.roleChoice = role;
+  document.getElementById('roleAdminBtn').classList.toggle('active', role==='admin');
+  document.getElementById('roleGuruBtn').classList.toggle('active', role==='guru');
+  document.getElementById('roleOrtuBtn').classList.toggle('active', role==='ortu');
+  document.getElementById('loginAdminFields').style.display = role==='admin' ? 'block':'none';
+  document.getElementById('loginGuruFields').style.display = role==='guru' ? 'block':'none';
+  document.getElementById('loginOrtuFields').style.display = role==='ortu' ? 'block':'none';
+}
+function populateGuruSelect(){
+  document.getElementById('guruSelect').innerHTML = DB.guru.map(g=>`<option value="${g.id}">${g.nama} — ${g.kelas}</option>`).join('');
+}
+function populateOrtuSelect(){
+  document.getElementById('ortuChild').innerHTML = DB.siswa.map(s=>`<option value="${s.id}">${s.nama} — ${s.kelas}</option>`).join('');
+}
+function doLogin(){
+  const errEl = document.getElementById('loginErr'); errEl.style.display='none';
+  errEl.textContent='Kode akses salah, coba lagi ya.';
+  const role = session.roleChoice || 'admin';
+  if(role==='admin'){
+    const pass = document.getElementById('adminPass').value;
+    if(pass !== DB.settings.passAdmin){ errEl.style.display='block'; return; }
+    session.role='admin'; session.guruId=null; enterAdmin();
+  } else if(role==='guru'){
+    const guruId = document.getElementById('guruSelect').value;
+    const pass = document.getElementById('guruPass').value;
+    if(!guruId){ errEl.textContent='Silakan pilih nama Anda.'; errEl.style.display='block'; return; }
+    if(pass !== DB.settings.passGuru){ errEl.style.display='block'; return; }
+    session.role='guru'; session.guruId=guruId; enterAdmin();
+  } else {
+    const childId = document.getElementById('ortuChild').value;
+    if(!childId){ errEl.textContent='Silakan pilih nama anak.'; errEl.style.display='block'; return; }
+    session.role='ortu'; session.childId=childId; enterOrtu();
+  }
+}
+function logout(){ session={role:null, childId:null, guruId:null}; showView('view-login'); }
+
+/* ==================== ADMIN APP ==================== */
+function enterAdmin(){
+  showView('view-admin');
+  document.getElementById('absenTanggal').value = currentAbsenDate;
+  document.getElementById('fKeuTgl').value = new Date().toISOString().slice(0,10);
+  document.getElementById('fKalTgl').value = new Date().toISOString().slice(0,10);
+  renderAdminHome(); renderSiswaList(); renderGuruList(); renderAbsenList(); renderBayarList();
+  renderKeuangan(); renderInventaris(); renderRaporPicker(); renderKalenderAdmin(); renderGaleriAdmin(); renderPPDBAdmin();
+  setKeuanganKategoriOptions(); applyAdminRolePermissions(); setAdminTab('home', document.querySelector('#view-admin .nav-btn'));
+}
+function applyAdminRolePermissions(){
+  const isAdmin = session.role==='admin';
+  document.getElementById('navKeuanganBtn').style.display = isAdmin ? 'flex':'none';
+  document.getElementById('menuKPI').style.display = isAdmin ? 'flex':'none';
+  document.getElementById('menuKPIGuru').style.display = isAdmin ? 'flex':'none';
+  const whoEl = document.getElementById('adminWho');
+  if(isAdmin){
+    whoEl.textContent = 'Admin';
+  } else {
+    const g = DB.guru.find(x=>x.id===session.guruId);
+    whoEl.textContent = 'Guru' + (g ? ' — '+g.nama : '');
+  }
+}
+let adminTab='home';
+function setAdminTab(tab, btn){
+  if(tab==='keuangan' && session.role!=='admin'){ return; }
+  adminTab = tab; adminSubStack=[];
+  document.getElementById('adminBackBtn').style.display='none';
+  document.querySelectorAll('#view-admin .admin-tab').forEach(el=>el.style.display='none');
+  document.querySelectorAll('#view-admin .admin-sub').forEach(el=>el.style.display='none');
+  document.getElementById('admin-'+tab).style.display='block';
+  document.querySelectorAll('#view-admin .nav-btn').forEach(b=>b.classList.remove('active'));
+  if(btn) btn.classList.add('active');
+  const titles={home:'Beranda', siswa:'Data Siswa', absen:'Absensi', keuangan:'Keuangan', lainnya:'Lainnya'};
+  document.getElementById('adminPageTitle').textContent = titles[tab];
+  document.getElementById('adminFab').style.display = (tab==='siswa' || tab==='keuangan') ? 'flex':'none';
+  if(tab==='siswa'){ document.getElementById('siswaListPanel').style.display='block'; document.getElementById('siswaDetailPanel').style.display='none'; }
+  if(tab==='home') renderAdminHome();
+  if(tab==='keuangan') renderKeuangan();
+  window._backAction = null;
+}
+function openSub(subId){
+  if((subId==='sub-kpi' || subId==='sub-kpi-guru') && session.role!=='admin'){ return; }
+  document.getElementById('admin-lainnya').style.display='none';
+  document.querySelectorAll('#view-admin .admin-sub').forEach(el=>el.style.display='none');
+  document.getElementById(subId).style.display='block';
+  adminSubStack.push(subId);
+  document.getElementById('adminBackBtn').style.display='flex';
+  const subTitles={'sub-kpi':'Dashboard KPI Sekolah','sub-kpi-guru':'KPI Guru','sub-guru':'Data Guru','sub-bayar':'Pembayaran SPP','sub-rapor':'Rapor Perkembangan','sub-kalender':'Kalender Akademik','sub-galeri':'Galeri Foto','sub-inventaris':'Inventaris Sekolah','sub-ppdb':'Pendaftaran Baru'};
+  document.getElementById('adminPageTitle').textContent = subTitles[subId] || 'Lainnya';
+  const fabMap={'sub-inventaris':true,'sub-kalender':true,'sub-galeri':true,'sub-guru':true};
+  document.getElementById('adminFab').style.display = fabMap[subId] ? 'flex':'none';
+  window._currentSub = subId;
+  window._backAction = adminGoBackLainnya;
+  if(subId==='sub-kpi') renderKPI();
+  if(subId==='sub-kpi-guru') renderKPIGuru();
+}
+function adminGoBackLainnya(){
+  document.querySelectorAll('#view-admin .admin-sub').forEach(el=>el.style.display='none');
+  document.getElementById('admin-lainnya').style.display='block';
+  document.getElementById('adminBackBtn').style.display='none';
+  document.getElementById('adminPageTitle').textContent='Lainnya';
+  document.getElementById('adminFab').style.display='none';
+  window._currentSub=null;
+  window._backAction=null;
+}
+function adminGoBack(){ if(window._backAction) window._backAction(); }
+function fabAction(){
+  if(window._currentSub==='sub-guru') openTambahGuru();
+  else if(window._currentSub==='sub-inventaris') openTambahInventaris();
+  else if(window._currentSub==='sub-kalender') openModal('modalKalender');
+  else if(window._currentSub==='sub-galeri') openTambahGaleri();
+  else if(adminTab==='siswa' && document.getElementById('siswaDetailPanel').style.display==='none') openTambahSiswa();
+  else if(adminTab==='keuangan') openModal('modalKeuangan');
+}
+function renderAdminHome(){
+  document.getElementById('statSiswa').textContent = DB.siswa.length;
+  document.getElementById('statGuru').textContent = DB.guru.length;
+  const today = DB.absensi[currentAbsenDate] || {};
+  document.getElementById('statHadirHariIni').textContent = Object.values(today).filter(v=>v==='hadir').length;
+  document.getElementById('statPPDBBaru').textContent = DB.ppdb.filter(p=>p.status==='baru').length;
+  const list = document.getElementById('pengumumanListAdmin');
+  list.innerHTML = DB.pengumuman.length ? DB.pengumuman.slice().reverse().map(p=>`
+    <div class="list-item"><div><div class="name">${p.judul}</div><div class="meta">${p.isi} · ${p.tgl}</div></div></div>`).join('')
+    : `<div class="empty"><span class="star8"></span><br>Belum ada pengumuman</div>`;
+}
+function avatarHTML(nama, foto){
+  const inisial = nama ? nama.trim().charAt(0).toUpperCase() : '?';
+  return foto ? `<img class="avatar" src="${foto}" alt="${nama}" onerror="this.outerHTML='<div class=\\'avatar\\'>${inisial}</div>'">` : `<div class="avatar">${inisial}</div>`;
+}
+function renderSiswaList(){
+  const list = document.getElementById('siswaList');
+  list.innerHTML = DB.siswa.length ? DB.siswa.map(s=>`
+    <div class="list-item">
+      <div class="li-left" style="cursor:pointer;" onclick="openSiswaDetail('${s.id}')">${avatarHTML(s.nama, s.foto)}
+        <div class="li-info"><div class="name">${s.nama}</div><div class="meta">${s.kelas} · Ortu: ${s.ortu}</div></div>
+      </div>
+      <div class="li-actions">
+        <button class="icon-btn small edit-btn" onclick="editSiswa('${s.id}')">✎</button>
+        <button class="icon-btn small del-btn" onclick="hapusSiswa('${s.id}')">✕</button>
+      </div>
+    </div>`).join('') : `<div class="empty"><span class="star8"></span><br>Belum ada data siswa. Tekan + untuk menambah.</div>`;
+}
+function renderGuruList(){
+  const list = document.getElementById('guruList');
+  list.innerHTML = DB.guru.length ? DB.guru.map(g=>`
+    <div class="list-item">
+      <div class="li-left">${avatarHTML(g.nama, g.foto)}
+        <div class="li-info"><div class="name">${g.nama}</div><div class="meta">${g.kelas}</div></div>
+      </div>
+      <div class="li-actions">
+        <button class="icon-btn small edit-btn" onclick="editGuru('${g.id}')">✎</button>
+        <button class="icon-btn small del-btn" onclick="hapusGuru('${g.id}')">✕</button>
+      </div>
+    </div>`).join('') : `<div class="empty"><span class="star8"></span><br>Belum ada data guru.</div>`;
+}
+document.addEventListener('DOMContentLoaded', ()=>{
+  const list = document.getElementById('guruList');
+  if(list) list.insertAdjacentHTML('beforebegin', '');
+});
+function renderAbsenList(){
+  document.getElementById('absenTanggal').value = currentAbsenDate;
+  const list = document.getElementById('absenList');
+  const dayData = DB.absensi[currentAbsenDate] || {};
+  list.innerHTML = DB.siswa.length ? DB.siswa.map(s=>{
+    const st = dayData[s.id] || '';
+    return `<div class="list-item">
+      <div><div class="name">${s.nama}</div><div class="meta">${s.kelas}</div></div>
+      <div class="attend-btns">
+        <button class="sel-hadir ${st==='hadir'?'on':''}" onclick="setAbsen('${s.id}','hadir')">H</button>
+        <button class="sel-sakit ${st==='sakit'?'on':''}" onclick="setAbsen('${s.id}','sakit')">S</button>
+        <button class="sel-izin ${st==='izin'?'on':''}" onclick="setAbsen('${s.id}','izin')">I</button>
+        <button class="sel-alpa ${st==='alpa'?'on':''}" onclick="setAbsen('${s.id}','alpa')">A</button>
+      </div></div>`;
+  }).join('') : `<div class="empty"><span class="star8"></span><br>Belum ada siswa untuk diabsen</div>`;
+}
+function setAbsen(siswaId, status){
+  if(!DB.absensi[currentAbsenDate]) DB.absensi[currentAbsenDate] = {};
+  DB.absensi[currentAbsenDate][siswaId] = status;
+  saveDB(DB); renderAbsenList(); renderAdminHome();
+}
+document.getElementById('absenTanggal')?.addEventListener('change', e=>{ currentAbsenDate = e.target.value; renderAbsenList(); });
+
+function renderBayarList(){
+  document.getElementById('bayarBulanLabel').textContent = formatBulan(currentBayarMonth);
+  if(!DB.pembayaran[currentBayarMonth]) DB.pembayaran[currentBayarMonth] = {};
+  const list = document.getElementById('bayarList');
+  list.innerHTML = DB.siswa.length ? DB.siswa.map(s=>{
+    const lunas = !!DB.pembayaran[currentBayarMonth][s.id];
+    return `<div class="list-item"><div><div class="name">${s.nama}</div><div class="meta">${s.kelas}</div></div>
+      <span class="badge ${lunas?'lunas':'belum'}" style="cursor:pointer;" onclick="toggleBayar('${s.id}')">${lunas?'Lunas':'Belum'}</span></div>`;
+  }).join('') : `<div class="empty"><span class="star8"></span><br>Belum ada siswa</div>`;
+}
+function toggleBayar(siswaId){ DB.pembayaran[currentBayarMonth][siswaId] = !DB.pembayaran[currentBayarMonth][siswaId]; saveDB(DB); renderBayarList(); }
+function formatBulan(ym){
+  const [y,m] = ym.split('-');
+  const bulan=['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','September','Oktober','November','Desember'];
+  return bulan[parseInt(m)-1] + ' ' + y;
+}
+let editingSiswaId = null;
+let editingGuruId = null;
+
+function resizeImageFile(file, maxDim, quality){
+  maxDim = maxDim || 300; quality = quality || 0.75;
+  return new Promise((resolve, reject)=>{
+    const reader = new FileReader();
+    reader.onload = e=>{
+      const img = new Image();
+      img.onload = ()=>{
+        let w = img.width, h = img.height;
+        if(w > h){ if(w > maxDim){ h = Math.round(h * maxDim / w); w = maxDim; } }
+        else { if(h > maxDim){ w = Math.round(w * maxDim / h); h = maxDim; } }
+        const canvas = document.createElement('canvas');
+        canvas.width = w; canvas.height = h;
+        canvas.getContext('2d').drawImage(img, 0, 0, w, h);
+        resolve(canvas.toDataURL('image/jpeg', quality));
+      };
+      img.onerror = ()=>reject(new Error('Gagal memuat gambar'));
+      img.src = e.target.result;
+    };
+    reader.onerror = ()=>reject(new Error('Gagal membaca file'));
+    reader.readAsDataURL(file);
+  });
+}
+async function handleFotoUpload(event, tipe){
+  const file = event.target.files[0]; if(!file) return;
+  const fieldId = tipe==='siswa' ? 'fSiswaFoto' : 'fGuruFoto';
+  try{
+    const dataUrl = await resizeImageFile(file);
+    document.getElementById(fieldId).value = dataUrl;
+    updateFotoPreview(tipe);
+  }catch(e){
+    alert('Gagal memuat foto, coba pilih foto lain.');
+  }
+  event.target.value = '';
+}
+function updateFotoPreview(tipe){
+  const fieldId = tipe==='siswa' ? 'fSiswaFoto' : 'fGuruFoto';
+  const previewId = tipe==='siswa' ? 'fSiswaFotoPreview' : 'fGuruFotoPreview';
+  const val = document.getElementById(fieldId).value.trim();
+  const nama = document.getElementById(tipe==='siswa' ? 'fSiswaNama' : 'fGuruNama').value.trim();
+  document.getElementById(previewId).outerHTML = avatarHTML(nama, val).replace('class="avatar"', `id="${previewId}" class="avatar" style="width:56px; height:56px; font-size:20px;"`);
+}
+
+function openTambahSiswa(){
+  editingSiswaId = null;
+  document.getElementById('modalSiswaTitle').textContent = 'Tambah Siswa';
+  document.getElementById('modalSiswaBtn').textContent = 'Simpan';
+  ['fSiswaFoto','fSiswaNama','fSiswaOrtu','fSiswaWA'].forEach(id=>document.getElementById(id).value='');
+  document.getElementById('fSiswaKelas').value = 'Kelas A';
+  updateFotoPreview('siswa');
+  openModal('modalSiswa');
+}
+function editSiswa(id){
+  const s = DB.siswa.find(x=>x.id===id); if(!s) return;
+  editingSiswaId = id;
+  document.getElementById('modalSiswaTitle').textContent = 'Edit Data Siswa';
+  document.getElementById('modalSiswaBtn').textContent = 'Simpan Perubahan';
+  document.getElementById('fSiswaFoto').value = s.foto || '';
+  document.getElementById('fSiswaNama').value = s.nama || '';
+  document.getElementById('fSiswaKelas').value = s.kelas || 'Kelas A';
+  document.getElementById('fSiswaOrtu').value = s.ortu || '';
+  document.getElementById('fSiswaWA').value = s.wa || '';
+  updateFotoPreview('siswa');
+  openModal('modalSiswa');
+}
+function openTambahGuru(){
+  editingGuruId = null;
+  document.getElementById('modalGuruTitle').textContent = 'Tambah Guru';
+  document.getElementById('modalGuruBtn').textContent = 'Simpan';
+  ['fGuruFoto','fGuruNama','fGuruWA'].forEach(id=>document.getElementById(id).value='');
+  document.getElementById('fGuruKelas').value = 'Kelas A';
+  updateFotoPreview('guru');
+  openModal('modalGuru');
+}
+function editGuru(id){
+  const g = DB.guru.find(x=>x.id===id); if(!g) return;
+  editingGuruId = id;
+  document.getElementById('modalGuruTitle').textContent = 'Edit Data Guru';
+  document.getElementById('modalGuruBtn').textContent = 'Simpan Perubahan';
+  document.getElementById('fGuruFoto').value = g.foto || '';
+  document.getElementById('fGuruNama').value = g.nama || '';
+  document.getElementById('fGuruKelas').value = g.kelas || 'Kelas A';
+  document.getElementById('fGuruWA').value = g.wa || '';
+  updateFotoPreview('guru');
+  openModal('modalGuru');
+}
+function hapusSiswa(id){ DB.siswa = DB.siswa.filter(s=>s.id!==id); saveDB(DB); renderSiswaList(); renderAdminHome(); }
+function hapusGuru(id){ DB.guru = DB.guru.filter(g=>g.id!==id); saveDB(DB); renderGuruList(); renderAdminHome(); }
+
+function tambahSiswa(){
+  const nama = document.getElementById('fSiswaNama').value.trim(); if(!nama) return;
+  const foto = document.getElementById('fSiswaFoto').value.trim();
+  const kelas = document.getElementById('fSiswaKelas').value;
+  const ortu = document.getElementById('fSiswaOrtu').value.trim();
+  const wa = document.getElementById('fSiswaWA').value.trim();
+  if(editingSiswaId){
+    const s = DB.siswa.find(x=>x.id===editingSiswaId);
+    if(s){ s.nama=nama; s.foto=foto; s.kelas=kelas; s.ortu=ortu; s.wa=wa; }
+  } else {
+    DB.siswa.push({id:'s'+Date.now(), nama, foto, kelas, ortu, wa});
+  }
+  saveDB(DB);
+  editingSiswaId = null;
+  closeModal('modalSiswa'); renderSiswaList(); renderAdminHome(); renderRaporPicker();
+}
+function tambahGuru(){
+  const nama = document.getElementById('fGuruNama').value.trim(); if(!nama) return;
+  const foto = document.getElementById('fGuruFoto').value.trim();
+  const kelas = document.getElementById('fGuruKelas').value;
+  const wa = document.getElementById('fGuruWA').value.trim();
+  if(editingGuruId){
+    const g = DB.guru.find(x=>x.id===editingGuruId);
+    if(g){ g.nama=nama; g.foto=foto; g.kelas=kelas; g.wa=wa; }
+  } else {
+    DB.guru.push({id:'g'+Date.now(), nama, foto, kelas, wa});
+  }
+  saveDB(DB);
+  editingGuruId = null;
+  closeModal('modalGuru'); renderGuruList(); renderAdminHome();
+}
+function tambahPengumuman(){
+  const judul = document.getElementById('fPengJudul').value.trim();
+  const isi = document.getElementById('fPengIsi').value.trim();
+  if(!judul || !isi) return;
+  DB.pengumuman.push({id:'p'+Date.now(), judul, isi, tgl:new Date().toISOString().slice(0,10)});
+  saveDB(DB);
+  document.getElementById('fPengJudul').value=''; document.getElementById('fPengIsi').value='';
+  closeModal('modalPengumuman'); renderAdminHome();
+}
+
+/* ---- Keuangan ---- */
+let keuTipeAktif = 'masuk';
+const KATEGORI_MASUK_PAKAI_SISWA = ['SPP','Pendaftaran','Seragam','Kegiatan/Ekstra','Infaq/Sedekah','Tabungan'];
+const KATEGORI_KELUAR_PAKAI_GURU = ['Gaji Guru/Staf'];
+function setKeuanganTipe(tipe){
+  keuTipeAktif = tipe;
+  document.getElementById('segMasuk').classList.toggle('active', tipe==='masuk');
+  document.getElementById('segKeluar').classList.toggle('active', tipe==='keluar');
+  setKeuanganKategoriOptions();
+}
+function setKeuanganKategoriOptions(){
+  const opts = keuTipeAktif==='masuk' ? KATEGORI_MASUK : KATEGORI_KELUAR;
+  document.getElementById('fKeuKategori').innerHTML = opts.map(o=>`<option>${o}</option>`).join('');
+  onKeuKategoriChange();
+}
+function onKeuKategoriChange(){
+  const kategori = document.getElementById('fKeuKategori').value;
+  const showSiswa = keuTipeAktif==='masuk' && KATEGORI_MASUK_PAKAI_SISWA.includes(kategori);
+  const showGuru = keuTipeAktif==='keluar' && KATEGORI_KELUAR_PAKAI_GURU.includes(kategori);
+  document.getElementById('fKeuSiswaWrap').style.display = showSiswa ? 'block':'none';
+  document.getElementById('fKeuGuruWrap').style.display = showGuru ? 'block':'none';
+  if(showSiswa){
+    document.getElementById('fKeuSiswa').innerHTML = '<option value="">- Tidak terkait siswa -</option>' +
+      DB.siswa.map(s=>`<option value="${s.id}">${s.nama} — ${s.kelas}</option>`).join('');
+  }
+  if(showGuru){
+    document.getElementById('fKeuGuru').innerHTML = '<option value="">- Tidak terkait guru/staf -</option>' +
+      DB.guru.map(g=>`<option value="${g.id}">${g.nama} — ${g.kelas}</option>`).join('');
+  }
+}
+function tambahKeuangan(){
+  const tgl = document.getElementById('fKeuTgl').value || new Date().toISOString().slice(0,10);
+  const jumlah = parseFloat(document.getElementById('fKeuJumlah').value) || 0;
+  if(jumlah<=0) return;
+  const siswaId = document.getElementById('fKeuSiswaWrap').style.display!=='none' ? document.getElementById('fKeuSiswa').value : '';
+  const guruId = document.getElementById('fKeuGuruWrap').style.display!=='none' ? document.getElementById('fKeuGuru').value : '';
+  DB.keuangan.push({id:'k'+Date.now(), tgl, tipe:keuTipeAktif, kategori:document.getElementById('fKeuKategori').value,
+    jumlah, keterangan:document.getElementById('fKeuKet').value.trim(), siswaId, guruId});
+  saveDB(DB);
+  document.getElementById('fKeuJumlah').value=''; document.getElementById('fKeuKet').value='';
+  closeModal('modalKeuangan'); renderKeuangan();
+}
+function rupiah(n){ return 'Rp' + Math.round(n).toLocaleString('id-ID'); }
+function renderKeuangan(){
+  document.getElementById('keuanganBulanLabel').textContent = formatBulan(currentKeuMonth);
+  const rows = DB.keuangan.filter(k=>k.tgl.startsWith(currentKeuMonth)).sort((a,b)=>b.tgl.localeCompare(a.tgl));
+  const masuk = rows.filter(r=>r.tipe==='masuk').reduce((a,r)=>a+r.jumlah,0);
+  const keluar = rows.filter(r=>r.tipe==='keluar').reduce((a,r)=>a+r.jumlah,0);
+  document.getElementById('statMasuk').textContent = rupiah(masuk);
+  document.getElementById('statKeluar').textContent = rupiah(keluar);
+  document.getElementById('statSaldo').textContent = rupiah(masuk-keluar);
+  const list = document.getElementById('keuanganList');
+  list.innerHTML = rows.length ? rows.map(r=>{
+    let terkait = '';
+    if(r.siswaId){ const s = DB.siswa.find(x=>x.id===r.siswaId); if(s) terkait = ' · '+s.nama; }
+    if(r.guruId){ const g = DB.guru.find(x=>x.id===r.guruId); if(g) terkait = ' · '+g.nama; }
+    return `<div class="list-item">
+      <div><div class="name">${r.keterangan || r.kategori}${terkait ? ` <span style="color:var(--sage); font-weight:400;">(${terkait.replace(' · ','')})</span>`:''}</div><div class="meta">${r.kategori} · ${r.tgl}</div></div>
+      <span class="badge ${r.tipe}">${r.tipe==='masuk'?'+':'-'}${rupiah(r.jumlah)}</span>
+    </div>`;
+  }).join('') : `<div class="empty"><span class="star8"></span><br>Belum ada transaksi bulan ini. Tekan tombol di bawah untuk mencatat.</div>`;
+}
+
+/* ---- Dashboard KPI ---- */
+function renderKPI(){
+  const bulanIni = new Date().toISOString().slice(0,7);
+
+  // Kehadiran bulan ini
+  const tanggalBulanIni = Object.keys(DB.absensi).filter(tgl=>tgl.startsWith(bulanIni));
+  let totalHadir = 0, totalSlot = 0;
+  tanggalBulanIni.forEach(tgl=>{
+    const data = DB.absensi[tgl];
+    totalHadir += Object.values(data).filter(v=>v==='hadir').length;
+    totalSlot += Object.values(data).length;
+  });
+  const persenHadir = totalSlot>0 ? Math.round((totalHadir/totalSlot)*100) : 0;
+  document.getElementById('kpiKehadiran').textContent = persenHadir+'%';
+
+  // SPP lunas bulan ini
+  const bayarBulan = DB.pembayaran[bulanIni] || {};
+  const totalSiswa = DB.siswa.length;
+  const lunasCount = DB.siswa.filter(s=>bayarBulan[s.id]).length;
+  const persenSpp = totalSiswa>0 ? Math.round((lunasCount/totalSiswa)*100) : 0;
+  document.getElementById('kpiSpp').textContent = persenSpp+'%';
+
+  // Rasio guru:siswa
+  document.getElementById('kpiRasio').textContent = DB.guru.length>0 ? ('1 : '+Math.round(DB.siswa.length/DB.guru.length)) : '-';
+
+  // Pendaftar baru bulan ini
+  document.getElementById('kpiPpdb').textContent = DB.ppdb.filter(p=>p.tgl && p.tgl.startsWith(bulanIni)).length;
+
+  // Keuangan bulan ini
+  const rowsKeu = DB.keuangan.filter(k=>k.tgl.startsWith(bulanIni));
+  const masuk = rowsKeu.filter(r=>r.tipe==='masuk').reduce((a,r)=>a+r.jumlah,0);
+  const keluar = rowsKeu.filter(r=>r.tipe==='keluar').reduce((a,r)=>a+r.jumlah,0);
+  document.getElementById('kpiMasuk').textContent = rupiah(masuk);
+  document.getElementById('kpiKeluar').textContent = rupiah(keluar);
+  document.getElementById('kpiSaldo').textContent = rupiah(masuk-keluar);
+
+  // Piutang belum lunas semua siswa
+  let totalPiutang = 0;
+  Object.values(DB.tagihan).forEach(list=>{
+    list.forEach(t=>{
+      const dibayar = t.cicilan.reduce((a,c)=>a+c.jumlah,0);
+      const sisa = t.total - dibayar;
+      if(sisa>0) totalPiutang += sisa;
+    });
+  });
+  document.getElementById('kpiPiutang').textContent = rupiah(totalPiutang);
+
+  // Kondisi inventaris
+  const labelKondisi={baik:'Baik', rusak:'Rusak', perlu_ganti:'Perlu Ganti'};
+  const counts = {baik:0, rusak:0, perlu_ganti:0};
+  DB.inventaris.forEach(i=>{ if(counts[i.kondisi]!==undefined) counts[i.kondisi]++; });
+  const wrapInv = document.getElementById('kpiInventaris');
+  wrapInv.innerHTML = DB.inventaris.length ? Object.keys(counts).map(k=>`
+    <div class="list-item"><div class="name">${labelKondisi[k]}</div><span class="badge ${k}">${counts[k]} barang</span></div>`).join('')
+    : `<div class="empty"><span class="star8"></span><br>Belum ada data inventaris</div>`;
+}
+
+/* ---- KPI Guru ---- */
+let currentPenilaianGuruId = null;
+function renderKPIGuru(){
+  const bulanIni = new Date().toISOString().slice(0,7);
+  const tanggalBulanIni = Object.keys(DB.absensi).filter(tgl=>tgl.startsWith(bulanIni));
+  const wrap = document.getElementById('kpiGuruList');
+  if(!DB.guru.length){ wrap.innerHTML = `<div class="empty"><span class="star8"></span><br>Belum ada data guru</div>`; return; }
+  wrap.innerHTML = DB.guru.map(g=>{
+    const siswaKelas = DB.siswa.filter(s=>s.kelas===g.kelas || g.kelas==='Semua Kelas');
+    let hadir=0, slot=0;
+    tanggalBulanIni.forEach(tgl=>{
+      const data = DB.absensi[tgl];
+      siswaKelas.forEach(s=>{ if(data[s.id]){ slot++; if(data[s.id]==='hadir') hadir++; } });
+    });
+    const persenHadir = slot>0 ? Math.round((hadir/slot)*100) : 0;
+    const siswaAdaRapor = siswaKelas.filter(s=>(DB.rapor[s.id]||[]).length>0).length;
+    const persenRapor = siswaKelas.length>0 ? Math.round((siswaAdaRapor/siswaKelas.length)*100) : 0;
+    const nilai = DB.penilaianGuru[g.id];
+    const bintang = (n)=> n ? '★'.repeat(n)+'☆'.repeat(5-n) : '-';
+    return `
+    <div class="card" style="margin-bottom:14px;">
+      <div class="card-head">
+        <div class="li-left" style="gap:12px;">${avatarHTML(g.nama, g.foto)}
+          <div class="li-info"><div class="name">${g.nama}</div><div class="meta">${g.kelas}</div></div>
+        </div>
+        <button class="small-btn" onclick="openPenilaianGuru('${g.id}')">${nilai ? 'Edit Nilai' : '+ Nilai'}</button>
+      </div>
+      <div class="stat-row" style="margin-bottom:10px;">
+        <div class="stat" style="padding:8px;"><div class="n mono" style="font-size:14px;">${persenHadir}%</div><div class="l">Kehadiran Kelas</div></div>
+        <div class="stat" style="padding:8px;"><div class="n mono" style="font-size:14px;">${persenRapor}%</div><div class="l">Kelengkapan Rapor</div></div>
+      </div>
+      ${nilai ? `
+      <div style="font-size:12px; line-height:1.9; color:var(--tinta);">
+        <div style="display:flex; justify-content:space-between;"><span>Kedisiplinan</span><span class="mono" style="color:var(--emas);">${bintang(nilai.kedisiplinan)}</span></div>
+        <div style="display:flex; justify-content:space-between;"><span>Kreativitas Mengajar</span><span class="mono" style="color:var(--emas);">${bintang(nilai.kreativitas)}</span></div>
+        <div style="display:flex; justify-content:space-between;"><span>Komunikasi Ortu</span><span class="mono" style="color:var(--emas);">${bintang(nilai.komunikasiOrtu)}</span></div>
+        <div style="display:flex; justify-content:space-between;"><span>Partisipasi Kegiatan</span><span class="mono" style="color:var(--emas);">${bintang(nilai.partisipasi)}</span></div>
+      </div>
+      ${nilai.catatan ? `<div class="meta" style="margin-top:8px; font-style:italic;">"${nilai.catatan}"</div>` : ''}
+      ` : `<div class="empty" style="padding:10px 0;">Belum ada penilaian manual</div>`}
+    </div>`;
+  }).join('');
+}
+function openPenilaianGuru(guruId){
+  currentPenilaianGuruId = guruId;
+  const g = DB.guru.find(x=>x.id===guruId);
+  document.getElementById('modalPenilaianGuruTitle').textContent = 'Penilaian: ' + (g ? g.nama : '');
+  const nilai = DB.penilaianGuru[guruId] || {kedisiplinan:5, kreativitas:5, komunikasiOrtu:5, partisipasi:5, catatan:''};
+  document.getElementById('fNilaiDisiplin').value = nilai.kedisiplinan;
+  document.getElementById('fNilaiKreatif').value = nilai.kreativitas;
+  document.getElementById('fNilaiKomunikasi').value = nilai.komunikasiOrtu;
+  document.getElementById('fNilaiPartisipasi').value = nilai.partisipasi;
+  document.getElementById('fNilaiCatatan').value = nilai.catatan || '';
+  openModal('modalPenilaianGuru');
+}
+function simpanPenilaianGuru(){
+  if(!currentPenilaianGuruId) return;
+  DB.penilaianGuru[currentPenilaianGuruId] = {
+    kedisiplinan: parseInt(document.getElementById('fNilaiDisiplin').value),
+    kreativitas: parseInt(document.getElementById('fNilaiKreatif').value),
+    komunikasiOrtu: parseInt(document.getElementById('fNilaiKomunikasi').value),
+    partisipasi: parseInt(document.getElementById('fNilaiPartisipasi').value),
+    catatan: document.getElementById('fNilaiCatatan').value.trim(),
+    tglUpdate: new Date().toISOString().slice(0,10)
+  };
+  saveDB(DB);
+  closeModal('modalPenilaianGuru'); renderKPIGuru();
+}
+
+/* ---- Tagihan & Cicilan Siswa ---- */
+let currentDetailSiswaId = null;
+let currentTagihanId = null;
+function openSiswaDetail(siswaId){
+  const s = DB.siswa.find(x=>x.id===siswaId); if(!s) return;
+  currentDetailSiswaId = siswaId;
+  document.getElementById('siswaListPanel').style.display='none';
+  document.getElementById('siswaDetailPanel').style.display='block';
+  document.getElementById('adminBackBtn').style.display='flex';
+  document.getElementById('adminPageTitle').textContent = s.nama;
+  document.getElementById('adminFab').style.display='none';
+  window._backAction = closeSiswaDetail;
+  renderSiswaDetailProfile();
+  renderTagihanList();
+}
+function closeSiswaDetail(){
+  currentDetailSiswaId = null;
+  document.getElementById('siswaDetailPanel').style.display='none';
+  document.getElementById('siswaListPanel').style.display='block';
+  document.getElementById('adminBackBtn').style.display='none';
+  document.getElementById('adminPageTitle').textContent='Data Siswa';
+  document.getElementById('adminFab').style.display='flex';
+  window._backAction = null;
+}
+function renderSiswaDetailProfile(){
+  const s = DB.siswa.find(x=>x.id===currentDetailSiswaId); if(!s) return;
+  document.getElementById('siswaDetailProfile').innerHTML = `
+    <div class="li-left" style="gap:14px;">
+      ${avatarHTML(s.nama, s.foto).replace('class="avatar"','class="avatar" style="width:56px;height:56px;font-size:20px;"')}
+      <div class="li-info">
+        <div class="name" style="font-size:16px;">${s.nama}</div>
+        <div class="meta">${s.kelas} · Ortu: ${s.ortu}${s.wa ? ' · '+s.wa : ''}</div>
+      </div>
+    </div>`;
+}
+function openModalTagihan(){
+  document.getElementById('fTagihanJudul').value='';
+  document.getElementById('fTagihanTotal').value='';
+  openModal('modalTagihan');
+}
+function tambahTagihan(){
+  if(!currentDetailSiswaId) return;
+  const judul = document.getElementById('fTagihanJudul').value.trim(); if(!judul) return;
+  const total = parseFloat(document.getElementById('fTagihanTotal').value) || 0; if(total<=0) return;
+  if(!DB.tagihan[currentDetailSiswaId]) DB.tagihan[currentDetailSiswaId] = [];
+  DB.tagihan[currentDetailSiswaId].push({
+    id:'tg'+Date.now(), kategori:document.getElementById('fTagihanKategori').value,
+    judul, total, tglDibuat:new Date().toISOString().slice(0,10), cicilan:[]
+  });
+  saveDB(DB);
+  closeModal('modalTagihan'); renderTagihanList();
+}
+function hapusTagihan(tagihanId){
+  if(!currentDetailSiswaId) return;
+  DB.tagihan[currentDetailSiswaId] = (DB.tagihan[currentDetailSiswaId]||[]).filter(t=>t.id!==tagihanId);
+  saveDB(DB); renderTagihanList();
+}
+function openModalCicilan(tagihanId){
+  currentTagihanId = tagihanId;
+  document.getElementById('fCicilanTgl').value = new Date().toISOString().slice(0,10);
+  document.getElementById('fCicilanJumlah').value='';
+  openModal('modalCicilan');
+}
+function tambahCicilan(){
+  if(!currentDetailSiswaId || !currentTagihanId) return;
+  const tgl = document.getElementById('fCicilanTgl').value || new Date().toISOString().slice(0,10);
+  const jumlah = parseFloat(document.getElementById('fCicilanJumlah').value) || 0;
+  if(jumlah<=0) return;
+  const list = DB.tagihan[currentDetailSiswaId] || [];
+  const tagihan = list.find(t=>t.id===currentTagihanId); if(!tagihan) return;
+  tagihan.cicilan.push({id:'cc'+Date.now(), tgl, jumlah});
+  DB.keuangan.push({id:'k'+Date.now(), tgl, tipe:'masuk', kategori:tagihan.kategori,
+    jumlah, keterangan:tagihan.judul, siswaId:currentDetailSiswaId, guruId:''});
+  saveDB(DB);
+  closeModal('modalCicilan'); renderTagihanList();
+}
+function hapusCicilan(tagihanId, cicilanId){
+  const list = DB.tagihan[currentDetailSiswaId] || [];
+  const tagihan = list.find(t=>t.id===tagihanId); if(!tagihan) return;
+  tagihan.cicilan = tagihan.cicilan.filter(c=>c.id!==cicilanId);
+  saveDB(DB); renderTagihanList();
+}
+function renderTagihanList(){
+  const wrap = document.getElementById('tagihanList');
+  const list = (DB.tagihan[currentDetailSiswaId] || []).slice().sort((a,b)=>b.tglDibuat.localeCompare(a.tglDibuat));
+  if(!list.length){ wrap.innerHTML = `<div class="empty"><span class="star8"></span><br>Belum ada tagihan. Tekan "+ Buat Tagihan" untuk menambah.</div>`; return; }
+  wrap.innerHTML = list.map(t=>{
+    const dibayar = t.cicilan.reduce((a,c)=>a+c.jumlah,0);
+    const sisa = t.total - dibayar;
+    const lunas = sisa <= 0;
+    const riwayat = t.cicilan.slice().sort((a,b)=>b.tgl.localeCompare(a.tgl)).map(c=>`
+      <div class="list-item" style="padding:8px 0;">
+        <div class="mono" style="font-size:12.5px;">${c.tgl}</div>
+        <div style="display:flex; align-items:center; gap:8px;">
+          <span class="mono" style="font-size:12.5px; color:#2F7A3D;">+${rupiah(c.jumlah)}</span>
+          <button class="icon-btn small del-btn" style="width:24px; height:24px; font-size:11px;" onclick="hapusCicilan('${t.id}','${c.id}')">✕</button>
+        </div>
+      </div>`).join('') || `<div class="empty" style="padding:10px 0;">Belum ada riwayat pembayaran</div>`;
+    return `
+    <div class="card" style="box-shadow:none; border:1px solid #F0EBDD; margin-bottom:12px; padding:14px;">
+      <div class="card-head" style="margin-bottom:8px;">
+        <div><div class="name">${t.judul}</div><div class="meta">${t.kategori} · dibuat ${t.tglDibuat}</div></div>
+        <span class="badge ${lunas?'lunas':'belum'}">${lunas?'Lunas':'Belum'}</span>
+      </div>
+      <div class="stat-row" style="margin-bottom:10px;">
+        <div class="stat" style="padding:8px;"><div class="n mono" style="font-size:14px;">${rupiah(t.total)}</div><div class="l">Tagihan</div></div>
+        <div class="stat masuk" style="padding:8px;"><div class="n mono" style="font-size:14px;">${rupiah(dibayar)}</div><div class="l">Dibayar</div></div>
+        <div class="stat keluar" style="padding:8px;"><div class="n mono" style="font-size:14px;">${rupiah(Math.max(sisa,0))}</div><div class="l">Sisa</div></div>
+      </div>
+      <div style="display:flex; gap:8px; margin-bottom:10px;">
+        ${!lunas ? `<button class="small-btn" onclick="openModalCicilan('${t.id}')">+ Bayar Cicilan</button>` : ''}
+        <button class="small-btn" style="background:#FBE4E4; color:var(--merah);" onclick="hapusTagihan('${t.id}')">Hapus Tagihan</button>
+      </div>
+      <div style="font-size:12px; font-weight:700; color:var(--sage); margin-bottom:4px;">Riwayat Pembayaran</div>
+      ${riwayat}
+    </div>`;
+  }).join('');
+}
+
+/* ---- Inventaris ---- */
+function openTambahInventaris(){
+  ['fInvFoto','fInvNama','fInvJumlah','fInvLokasi'].forEach(id=>document.getElementById(id).value='');
+  document.getElementById('fInvKondisi').value = 'baik';
+  updateInventarisPreview();
+  openModal('modalInventaris');
+}
+async function handleInventarisUpload(event){
+  const file = event.target.files[0]; if(!file) return;
+  try{
+    const dataUrl = await resizeImageFile(file, 500, 0.7);
+    document.getElementById('fInvFoto').value = dataUrl;
+    updateInventarisPreview();
+  }catch(e){
+    alert('Gagal memuat foto, coba pilih foto lain.');
+  }
+  event.target.value = '';
+}
+function updateInventarisPreview(){
+  const url = document.getElementById('fInvFoto').value.trim();
+  const wrap = document.getElementById('fInvPreviewWrap');
+  wrap.innerHTML = url ? `<div class="gallery-item" style="max-width:140px;"><img src="${url}" alt="" onerror="this.style.display='none'"></div>` : '';
+}
+function tambahInventaris(){
+  const nama = document.getElementById('fInvNama').value.trim(); if(!nama) return;
+  DB.inventaris.push({id:'i'+Date.now(), nama, foto:document.getElementById('fInvFoto').value.trim(),
+    jumlah:parseInt(document.getElementById('fInvJumlah').value)||1,
+    kondisi:document.getElementById('fInvKondisi').value, lokasi:document.getElementById('fInvLokasi').value.trim()});
+  saveDB(DB);
+  ['fInvFoto','fInvNama','fInvJumlah','fInvLokasi'].forEach(id=>document.getElementById(id).value='');
+  updateInventarisPreview();
+  closeModal('modalInventaris'); renderInventaris();
+}
+function renderInventaris(){
+  const list = document.getElementById('inventarisList');
+  const labelKondisi={baik:'Baik', rusak:'Rusak', perlu_ganti:'Perlu Ganti'};
+  list.innerHTML = DB.inventaris.length ? DB.inventaris.map(i=>`
+    <div class="list-item">
+      <div class="li-left">
+        ${i.foto ? `<img class="avatar" style="border-radius:10px;" src="${i.foto}" alt="${i.nama}" onerror="this.style.display='none'">` : `<div class="avatar" style="border-radius:10px;">📦</div>`}
+        <div class="li-info"><div class="name">${i.nama} <span class="mono" style="color:var(--sage); font-weight:400;">×${i.jumlah}</span></div><div class="meta">${i.lokasi||'-'}</div></div>
+      </div>
+      <span class="badge ${i.kondisi}">${labelKondisi[i.kondisi]}</span>
+    </div>`).join('') : `<div class="empty"><span class="star8"></span><br>Belum ada data inventaris. Tekan + untuk menambah.</div>`;
+}
+
+/* ---- Rapor ---- */
+function renderRaporPicker(){
+  const wrap = document.getElementById('raporSiswaPicker');
+  wrap.innerHTML = DB.siswa.length ? `<select id="raporPickSelect" onchange="pilihSiswaRapor(this.value)">
+    <option value="">-- Pilih siswa --</option>
+    ${DB.siswa.map(s=>`<option value="${s.id}">${s.nama} — ${s.kelas}</option>`).join('')}
+  </select>` : `<div class="empty"><span class="star8"></span><br>Belum ada siswa</div>`;
+}
+function pilihSiswaRapor(id){
+  currentRaporSiswaId = id;
+  const s = DB.siswa.find(x=>x.id===id);
+  document.getElementById('raporSiswaNama').textContent = s ? ('Rapor: '+s.nama) : 'Pilih siswa di atas';
+  renderRaporList();
+}
+function raporHTML(r){
+  return `
+      <div class="meta" style="margin-top:6px; line-height:1.6;">
+        <b>1. Nilai Agama & Moral:</b> ${r.agamaMoral || r.spiritual || '-'}<br>
+        <b>2. Fisik-Motorik:</b> ${r.fisikMotorik || r.motorik || '-'}<br>
+        <b>3. Kognitif:</b> ${r.kognitif || '-'}<br>
+        <b>4. Bahasa:</b> ${r.bahasa || '-'}<br>
+        <b>5. Sosial-Emosional:</b> ${r.sosialEmosional || r.akhlak || '-'}<br>
+        <b>6. Seni:</b> ${r.seni || '-'}
+      </div>`;
+}
+function renderRaporList(){
+  const list = document.getElementById('raporList');
+  if(!currentRaporSiswaId){ list.innerHTML = `<div class="empty"><span class="star8"></span><br>Pilih siswa dulu untuk melihat/menambah rapor</div>`; return; }
+  const entries = DB.rapor[currentRaporSiswaId] || [];
+  list.innerHTML = `<button class="small-btn" style="margin-bottom:12px;" onclick="openModal('modalRapor')">+ Tambah Catatan</button>` +
+   (entries.length ? entries.slice().reverse().map(r=>`
+    <div class="list-item" style="display:block;">
+      <div class="name">${r.semester}</div>
+      ${raporHTML(r)}
+    </div>`).join('') : `<div class="empty"><span class="star8"></span><br>Belum ada catatan rapor</div>`);
+}
+function tambahRapor(){
+  if(!currentRaporSiswaId) return;
+  const semester = document.getElementById('fRaporSemester').value.trim(); if(!semester) return;
+  if(!DB.rapor[currentRaporSiswaId]) DB.rapor[currentRaporSiswaId]=[];
+  DB.rapor[currentRaporSiswaId].push({
+    id:'r'+Date.now(), semester,
+    agamaMoral:document.getElementById('fRaporAgama').value.trim(),
+    fisikMotorik:document.getElementById('fRaporFisik').value.trim(),
+    kognitif:document.getElementById('fRaporKognitif').value.trim(),
+    bahasa:document.getElementById('fRaporBahasa').value.trim(),
+    sosialEmosional:document.getElementById('fRaporSosial').value.trim(),
+    seni:document.getElementById('fRaporSeni').value.trim()
+  });
+  saveDB(DB);
+  ['fRaporSemester','fRaporAgama','fRaporFisik','fRaporKognitif','fRaporBahasa','fRaporSosial','fRaporSeni'].forEach(id=>document.getElementById(id).value='');
+  closeModal('modalRapor'); renderRaporList();
+}
+
+/* ---- Kalender ---- */
+function tambahKalender(){
+  const judul = document.getElementById('fKalJudul').value.trim(); if(!judul) return;
+  DB.kalender.push({id:'c'+Date.now(), tgl:document.getElementById('fKalTgl').value, judul, keterangan:document.getElementById('fKalKet').value.trim()});
+  saveDB(DB);
+  document.getElementById('fKalJudul').value=''; document.getElementById('fKalKet').value='';
+  closeModal('modalKalender'); renderKalenderAdmin(); renderPublicKalender();
+}
+function upcomingKalender(){
+  const today = new Date().toISOString().slice(0,10);
+  return DB.kalender.filter(k=>k.tgl>=today).sort((a,b)=>a.tgl.localeCompare(b.tgl));
+}
+function renderKalenderAdmin(){
+  const list = document.getElementById('kalenderListAdmin');
+  const rows = DB.kalender.slice().sort((a,b)=>a.tgl.localeCompare(b.tgl));
+  list.innerHTML = rows.length ? rows.map(k=>`
+    <div class="list-item"><div><div class="name">${k.judul}</div><div class="meta">${k.keterangan||''}</div></div><span class="badge izin mono">${k.tgl}</span></div>`).join('')
+    : `<div class="empty"><span class="star8"></span><br>Belum ada kegiatan. Tekan + untuk menambah.</div>`;
+}
+function renderPublicKalender(){
+  const wrap = document.getElementById('publicKalender'); if(!wrap) return;
+  const rows = upcomingKalender().slice(0,4);
+  wrap.innerHTML = rows.length ? rows.map(k=>`
+    <div class="list-item"><div><div class="name">${k.judul}</div><div class="meta">${k.keterangan||''}</div></div><span class="badge izin mono">${k.tgl}</span></div>`).join('')
+    : `<div class="empty"><span class="star8"></span><br>Belum ada kegiatan mendatang</div>`;
+}
+
+/* ---- Galeri ---- */
+function openTambahGaleri(){
+  document.getElementById('fGalUrl').value='';
+  document.getElementById('fGalCap').value='';
+  updateGaleriPreview();
+  openModal('modalGaleri');
+}
+async function handleGaleriUpload(event){
+  const file = event.target.files[0]; if(!file) return;
+  try{
+    const dataUrl = await resizeImageFile(file, 800, 0.7);
+    document.getElementById('fGalUrl').value = dataUrl;
+    updateGaleriPreview();
+  }catch(e){
+    alert('Gagal memuat foto, coba pilih foto lain.');
+  }
+  event.target.value = '';
+}
+function updateGaleriPreview(){
+  const url = document.getElementById('fGalUrl').value.trim();
+  const wrap = document.getElementById('fGalPreviewWrap');
+  wrap.innerHTML = url ? `<div class="gallery-item" style="max-width:160px;"><img src="${url}" alt="" onerror="this.style.display='none'"></div>` : '';
+}
+function tambahGaleri(){
+  const url = document.getElementById('fGalUrl').value.trim(); if(!url) return;
+  DB.galeri.push({id:'gl'+Date.now(), url, caption:document.getElementById('fGalCap').value.trim(), tgl:new Date().toISOString().slice(0,10)});
+  saveDB(DB);
+  document.getElementById('fGalUrl').value=''; document.getElementById('fGalCap').value='';
+  updateGaleriPreview();
+  closeModal('modalGaleri'); renderGaleriAdmin(); renderPublicGaleri();
+}
+function galeriCardHTML(g){
+  return `<div class="gallery-item"><img src="${g.url}" alt="${g.caption||''}" onerror="this.style.display='none'"><div class="cap">${g.caption||''}</div></div>`;
+}
+function renderGaleriAdmin(){
+  const wrap = document.getElementById('galeriListAdmin');
+  wrap.innerHTML = DB.galeri.length ? DB.galeri.slice().reverse().map(galeriCardHTML).join('')
+    : `<div class="empty" style="grid-column:1/-1;"><span class="star8"></span><br>Belum ada foto. Tekan + untuk menambah.</div>`;
+}
+function renderPublicGaleri(){
+  const wrap = document.getElementById('publicGaleri'); if(!wrap) return;
+  const rows = DB.galeri.slice().reverse().slice(0,4);
+  wrap.innerHTML = rows.length ? rows.map(galeriCardHTML).join('')
+    : `<div class="empty" style="grid-column:1/-1;"><span class="star8"></span><br>Galeri segera hadir</div>`;
+}
+
+/* ---- PPDB ---- */
+function daftarPPDB(){
+  const nama = document.getElementById('pfNamaAnak').value.trim();
+  const namaOrtu = document.getElementById('pfNamaOrtu').value.trim();
+  const wa = document.getElementById('pfWA').value.trim();
+  if(!nama || !namaOrtu || !wa){ return; }
+  DB.ppdb.push({id:'d'+Date.now(), namaAnak:nama, tglLahir:document.getElementById('pfTglLahir').value,
+    namaOrtu, wa, alamat:document.getElementById('pfAlamat').value.trim(), status:'baru', tgl:new Date().toISOString().slice(0,10)});
+  saveDB(DB);
+  ['pfNamaAnak','pfTglLahir','pfNamaOrtu','pfWA','pfAlamat'].forEach(id=>document.getElementById(id).value='');
+  document.getElementById('ppdbSuccess').style.display='block';
+  setTimeout(()=>{ document.getElementById('ppdbSuccess').style.display='none'; }, 4000);
+}
+function renderPPDBAdmin(){
+  const list = document.getElementById('ppdbList');
+  const rows = DB.ppdb.slice().reverse();
+  list.innerHTML = rows.length ? rows.map(p=>`
+    <div class="list-item" style="display:block;">
+      <div style="display:flex; justify-content:space-between; align-items:center;">
+        <div class="name">${p.namaAnak}</div><span class="badge ${p.status}">${p.status==='baru'?'Baru':p.status==='diterima'?'Diterima':'Ditolak'}</span>
+      </div>
+      <div class="meta" style="margin:4px 0 8px;">Ortu: ${p.namaOrtu} · WA: ${p.wa} · ${p.tgl}</div>
+      ${p.status==='baru' ? `<div style="display:flex; gap:8px;">
+        <button class="small-btn" onclick="setPPDBStatus('${p.id}','diterima')">Terima & Jadi Siswa</button>
+        <button class="small-btn" style="background:#FBE4E4; color:var(--merah);" onclick="setPPDBStatus('${p.id}','ditolak')">Tolak</button>
+      </div>` : ''}
+    </div>`).join('') : `<div class="empty"><span class="star8"></span><br>Belum ada pendaftar baru</div>`;
+}
+function setPPDBStatus(id, status){
+  const p = DB.ppdb.find(x=>x.id===id); if(!p) return;
+  p.status = status;
+  if(status==='diterima'){
+    DB.siswa.push({id:'s'+Date.now(), nama:p.namaAnak, kelas:'Kelas A', ortu:p.namaOrtu, wa:p.wa});
+  }
+  saveDB(DB); renderPPDBAdmin(); renderAdminHome(); renderSiswaList(); renderRaporPicker();
+}
+
+/* ==================== ORANG TUA APP ==================== */
+function enterOrtu(){
+  showView('view-ortu');
+  setOrtuTab('home', document.querySelector('#view-ortu .nav-btn'));
+  renderOrtuHome(); renderOrtuAbsen(); renderOrtuBayar(); renderOrtuRapor(); renderOrtuKalender(); renderOrtuGaleri(); renderOrtuTagihan();
+}
+function setOrtuTab(tab, btn){
+  ortuSubStack=[];
+  document.getElementById('ortuBackBtn').style.display='none';
+  document.querySelectorAll('#view-ortu .ortu-tab').forEach(el=>el.style.display='none');
+  document.querySelectorAll('#view-ortu .ortu-sub').forEach(el=>el.style.display='none');
+  document.getElementById('ortu-'+tab).style.display='block';
+  document.querySelectorAll('#view-ortu .nav-btn').forEach(b=>b.classList.remove('active'));
+  if(btn) btn.classList.add('active');
+  const titles={home:'Beranda', absen:'Kehadiran', bayar:'Pembayaran SPP', lainnya:'Lainnya'};
+  document.getElementById('ortuPageTitle').textContent = titles[tab];
+}
+function openSubOrtu(subId){
+  document.getElementById('ortu-lainnya').style.display='none';
+  document.querySelectorAll('#view-ortu .ortu-sub').forEach(el=>el.style.display='none');
+  document.getElementById(subId).style.display='block';
+  document.getElementById('ortuBackBtn').style.display='flex';
+  const titles={'subo-tagihan':'Tagihan & Pembayaran','subo-rapor':'Rapor Perkembangan','subo-kalender':'Kalender Akademik','subo-galeri':'Galeri Foto'};
+  document.getElementById('ortuPageTitle').textContent = titles[subId];
+}
+function ortuGoBack(){
+  document.querySelectorAll('#view-ortu .ortu-sub').forEach(el=>el.style.display='none');
+  document.getElementById('ortu-lainnya').style.display='block';
+  document.getElementById('ortuBackBtn').style.display='none';
+  document.getElementById('ortuPageTitle').textContent='Lainnya';
+}
+function getAnak(){ return DB.siswa.find(s=>s.id===session.childId); }
+function renderOrtuHome(){
+  const anak = getAnak(); if(!anak) return;
+  document.getElementById('ortuAnakNama').textContent = anak.nama;
+  document.getElementById('ortuAnakAvatar').innerHTML = avatarHTML(anak.nama, anak.foto);
+  document.getElementById('ortuAnakKelas').textContent = anak.kelas;
+  const bulanIni = new Date().toISOString().slice(0,7);
+  let hadirCount=0;
+  Object.entries(DB.absensi).forEach(([tgl, data])=>{ if(tgl.startsWith(bulanIni) && data[anak.id]==='hadir') hadirCount++; });
+  document.getElementById('ortuHadirBulan').textContent = hadirCount;
+  const list = document.getElementById('pengumumanListOrtu');
+  list.innerHTML = DB.pengumuman.length ? DB.pengumuman.slice().reverse().map(p=>`
+    <div class="list-item"><div><div class="name">${p.judul}</div><div class="meta">${p.isi} · ${p.tgl}</div></div></div>`).join('')
+    : `<div class="empty"><span class="star8"></span><br>Belum ada pengumuman</div>`;
+}
+function renderOrtuAbsen(){
+  const anak = getAnak(); if(!anak) return;
+  const rows = Object.entries(DB.absensi).filter(([tgl,data])=>data[anak.id]).sort((a,b)=>b[0].localeCompare(a[0])).slice(0,30);
+  const list = document.getElementById('ortuAbsenList');
+  list.innerHTML = rows.length ? rows.map(([tgl,data])=>{
+    const st = data[anak.id]; const label={hadir:'Hadir',sakit:'Sakit',izin:'Izin',alpa:'Alpa'}[st];
+    return `<div class="list-item"><div class="name mono" style="font-size:13px;">${tgl}</div><span class="badge ${st}">${label}</span></div>`;
+  }).join('') : `<div class="empty"><span class="star8"></span><br>Belum ada riwayat kehadiran</div>`;
+}
+function renderOrtuBayar(){
+  const anak = getAnak(); if(!anak) return;
+  const rows = Object.entries(DB.pembayaran).sort((a,b)=>b[0].localeCompare(a[0]));
+  const list = document.getElementById('ortuBayarList');
+  list.innerHTML = rows.length ? rows.map(([ym,data])=>{
+    const lunas = !!data[anak.id];
+    return `<div class="list-item"><div class="name">${formatBulan(ym)}</div><span class="badge ${lunas?'lunas':'belum'}">${lunas?'Lunas':'Belum'}</span></div>`;
+  }).join('') : `<div class="empty"><span class="star8"></span><br>Belum ada catatan pembayaran</div>`;
+}
+function renderOrtuRapor(){
+  const anak = getAnak(); if(!anak) return;
+  const entries = DB.rapor[anak.id] || [];
+  const list = document.getElementById('ortuRaporList');
+  list.innerHTML = entries.length ? entries.slice().reverse().map(r=>`
+    <div class="list-item" style="display:block;">
+      <div class="name">${r.semester}</div>
+      ${raporHTML(r)}
+    </div>`).join('') : `<div class="empty"><span class="star8"></span><br>Rapor belum tersedia</div>`;
+}
+function renderOrtuKalender(){
+  const list = document.getElementById('ortuKalenderList');
+  const rows = upcomingKalender();
+  list.innerHTML = rows.length ? rows.map(k=>`
+    <div class="list-item"><div><div class="name">${k.judul}</div><div class="meta">${k.keterangan||''}</div></div><span class="badge izin mono">${k.tgl}</span></div>`).join('')
+    : `<div class="empty"><span class="star8"></span><br>Belum ada kegiatan mendatang</div>`;
+}
+function renderOrtuGaleri(){
+  const wrap = document.getElementById('ortuGaleriList');
+  wrap.innerHTML = DB.galeri.length ? DB.galeri.slice().reverse().map(galeriCardHTML).join('')
+    : `<div class="empty" style="grid-column:1/-1;"><span class="star8"></span><br>Belum ada foto kegiatan</div>`;
+}
+function renderOrtuTagihan(){
+  const anak = getAnak(); if(!anak) return;
+  const wrap = document.getElementById('ortuTagihanList');
+  const list = (DB.tagihan[anak.id] || []).slice().sort((a,b)=>b.tglDibuat.localeCompare(a.tglDibuat));
+  if(!list.length){ wrap.innerHTML = `<div class="empty"><span class="star8"></span><br>Belum ada tagihan untuk saat ini</div>`; return; }
+  wrap.innerHTML = list.map(t=>{
+    const dibayar = t.cicilan.reduce((a,c)=>a+c.jumlah,0);
+    const sisa = t.total - dibayar;
+    const lunas = sisa <= 0;
+    const riwayat = t.cicilan.slice().sort((a,b)=>b.tgl.localeCompare(a.tgl)).map(c=>`
+      <div class="list-item" style="padding:8px 0;">
+        <div class="mono" style="font-size:12.5px;">${c.tgl}</div>
+        <span class="mono" style="font-size:12.5px; color:#2F7A3D;">+${rupiah(c.jumlah)}</span>
+      </div>`).join('') || `<div class="empty" style="padding:10px 0;">Belum ada riwayat pembayaran</div>`;
+    return `
+    <div class="card" style="box-shadow:none; border:1px solid #F0EBDD; margin-bottom:12px; padding:14px;">
+      <div class="card-head" style="margin-bottom:8px;">
+        <div><div class="name">${t.judul}</div><div class="meta">${t.kategori}</div></div>
+        <span class="badge ${lunas?'lunas':'belum'}">${lunas?'Lunas':'Belum'}</span>
+      </div>
+      <div class="stat-row" style="margin-bottom:10px;">
+        <div class="stat" style="padding:8px;"><div class="n mono" style="font-size:14px;">${rupiah(t.total)}</div><div class="l">Tagihan</div></div>
+        <div class="stat masuk" style="padding:8px;"><div class="n mono" style="font-size:14px;">${rupiah(dibayar)}</div><div class="l">Dibayar</div></div>
+        <div class="stat keluar" style="padding:8px;"><div class="n mono" style="font-size:14px;">${rupiah(Math.max(sisa,0))}</div><div class="l">Sisa</div></div>
+      </div>
+      <div style="font-size:12px; font-weight:700; color:var(--sage); margin-bottom:4px;">Riwayat Pembayaran</div>
+      ${riwayat}
+    </div>`;
+  }).join('');
+}
+
+/* ==================== MODAL & MISC ==================== */
+function openModal(id){ document.getElementById(id).classList.add('active'); }
+function closeModal(id){ document.getElementById(id).classList.remove('active'); }
+
+(function(){
+  const wrap = document.getElementById('heroStars');
+  const positions = [[8,10],[80,5],[60,60],[20,75],[92,45]];
+  positions.forEach(([x,y])=>{
+    const s = document.createElement('span'); s.className='star8'; s.style.left=x+'%'; s.style.top=y+'%'; wrap.appendChild(s);
+  });
+})();
+
+goPublic();
+syncWithFirebase();
+</script>
+</body>
+</html>
