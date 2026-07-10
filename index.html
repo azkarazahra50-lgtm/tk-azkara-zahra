@@ -739,11 +739,15 @@ let firebaseReady = false;
 let fbRef = null;
 let isApplyingRemoteUpdate = false;
 
-function updateSyncStatus(status){
+function updateSyncStatus(status, errMsg){
   const el = document.getElementById('syncStatus'); if(!el) return;
   if(status==='online'){ el.innerHTML='☁️ Tersambung — data sinkron otomatis'; el.style.color='#2F7A3D'; }
   else if(status==='connecting'){ el.innerHTML='⏳ Menyambungkan...'; el.style.color='var(--sage)'; }
-  else { el.innerHTML='📴 Mode offline — data tersimpan di HP ini saja'; el.style.color='var(--merah)'; }
+  else {
+    const detail = errMsg ? ` (${errMsg})` : '';
+    el.innerHTML = `📴 Mode offline${detail} — data tersimpan di HP ini saja <a href="#" onclick="syncWithFirebase(); return false;" style="color:var(--hijau); font-weight:700;">🔄 Coba lagi</a>`;
+    el.style.color='var(--merah)';
+  }
 }
 function mergeDefaults(obj){
   Object.keys(defaultData).forEach(k=>{ if(!(k in obj)) obj[k]=defaultData[k]; });
@@ -792,12 +796,12 @@ function listenRemoteChanges(){
 async function syncWithFirebase(){
   updateSyncStatus('connecting');
   try{
-    if(typeof firebase === 'undefined') throw new Error('SDK Firebase gagal dimuat');
-    firebase.initializeApp(firebaseConfig);
+    if(typeof firebase === 'undefined') throw new Error('SDK Firebase gagal dimuat — cek koneksi internet atau ada yang memblokir gstatic.com');
+    if(!firebase.apps || !firebase.apps.length){ firebase.initializeApp(firebaseConfig); }
     fbRef = firebase.database().ref('tkaz_data');
     const snapshot = await Promise.race([
       fbRef.once('value'),
-      new Promise((_,reject)=>setTimeout(()=>reject(new Error('timeout')), 7000))
+      new Promise((_,reject)=>setTimeout(()=>reject(new Error('timeout 12 detik')), 12000))
     ]);
     const remote = snapshot.val();
     if(remote){
@@ -813,8 +817,8 @@ async function syncWithFirebase(){
   }catch(e){
     console.error('Sinkronisasi awal gagal atau timeout, lanjut pakai data lokal:', e);
     firebaseReady = false;
-    updateSyncStatus('offline');
-    listenRemoteChanges();
+    updateSyncStatus('offline', (e && e.message) ? e.message : String(e));
+    try{ if(fbRef) listenRemoteChanges(); }catch(e2){ console.error('Gagal pasang listener:', e2); }
   }
 }
 let currentAbsenDate = new Date().toISOString().slice(0,10);
